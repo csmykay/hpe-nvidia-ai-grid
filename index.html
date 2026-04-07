@@ -107,10 +107,10 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
     <div id="map-legend">
       <span class="lg-title">AI Grid</span>
       <span class="lg"><svg width="14" height="14"><polygon points="7,0.5 13,3.8 13,10.2 7,13.5 1,10.2 1,3.8" fill="#3C3489" stroke="#CECBF6" stroke-width="1.5"/></svg>Zone 1 — Core AI Factory</span>
-      <span class="lg"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#085041" stroke="#9FE1CB" stroke-width="1.5"/></svg>Zone 3 — Far Edge / Regional POP</span>
-      <span class="lg"><svg width="14" height="14"><circle cx="7" cy="7" r="4" fill="#0C447C" stroke="#B5D4F4" stroke-width="1"/></svg>Zone 2 — Near Edge</span>
-      <span class="lg" style="margin-left:6px"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#1D9E75" stroke-width="1.8"/></svg>Zone 3→1 (400–800GbE)</span>
-      <span class="lg"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#85B7EB" stroke-width=".9" stroke-dasharray="4,2.5"/></svg>Zone 2→3 (100GbE WAN)</span>
+      <span class="lg"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#085041" stroke="#9FE1CB" stroke-width="1.5"/></svg>Zone 2 — Near Edge</span>
+      <span class="lg"><svg width="14" height="14"><circle cx="7" cy="7" r="4" fill="#0C447C" stroke="#B5D4F4" stroke-width="1"/></svg>Zone 3 — Far Edge</span>
+      <span class="lg" style="margin-left:6px"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#1D9E75" stroke-width="1.8"/></svg>Zone 2→1 (400–800GbE)</span>
+      <span class="lg"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#85B7EB" stroke-width=".9" stroke-dasharray="4,2.5"/></svg>Zone 3→2 (100GbE WAN)</span>
       <span class="lg" style="margin-left:4px;color:#534AB7;font-weight:600">★ Example expanded below</span>
     </div>
   </div>
@@ -120,15 +120,15 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
     <div id="tabs">
       <button class="tab tz3 active" onclick="switchZone('z3')">
         <svg width="10" height="10"><polygon points="5,0 9.3,2.5 9.3,7.5 5,10 0.7,7.5 0.7,2.5" fill="#CECBF6"/></svg>
-        Zone 1 — Dallas
+        Zone 1 — Core Factory
       </button>
       <button class="tab tz2" onclick="switchZone('z2')">
         <svg width="10" height="10"><circle cx="5" cy="5" r="4.5" fill="#9FE1CB"/></svg>
-        Zone 3 — Atlanta
+        Zone 2 — Near Edge
       </button>
       <button class="tab tz1" onclick="switchZone('z1')">
         <svg width="10" height="10"><circle cx="5" cy="5" r="4.5" fill="#85B7EB"/></svg>
-        Zone 2 — San Jose
+        Zone 3 — Far Edge
       </button>
     </div>
     <div id="panels">
@@ -422,17 +422,17 @@ function buildZ3() {
   ${swStack([
     ['NVIDIA NeMo / NeMo Microservices','ai'],['NVIDIA Dynamo','ai'],['NVIDIA Run:ai','ai'],
     ['NVIDIA AI Enterprise','ai'],['NVIDIA NIM microservices','ai'],['NVIDIA Triton + TRT-LLM','ai'],
-    ['K8s — HPE Ezmeral Runtime','k8'],['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
-    ['NGC Private Registry','inf'],['Prometheus + Grafana','inf'],['Juniper Apstra + Mist AI','inf']
+    ['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
+    ['NGC Private Registry','inf'],['Prometheus + Grafana','inf'],['Juniper Apstra + Mist AI','hp']
   ])}`;
 }
 
 function buildZ2() {
   return `
   <div class="zh">
-    <span class="zh-badge z2">Zone 3</span>
+    <span class="zh-badge z2">Zone 2</span>
     <div>
-      <div class="zh-city">Atlanta, GA — Far Edge / Regional POP</div>
+      <div class="zh-city">Atlanta, GA — Near Edge / Regional POP</div>
       <div class="zh-desc">Power-constrained regional POP · DL145 only · KV cache disaggregation via BF4 + Alletra 10K · Spillover routing to Dallas core via Juniper PTX</div>
     </div>
   </div>
@@ -443,25 +443,25 @@ function buildZ2() {
   <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
     ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD ports · 400GbE uplinks to PTX · Latest-gen Juniper campus/edge ToR',{cls:'net',label:'100GbE ToR'})}
-    ${card(svgPTX10000(),'Juniper PTX Series','WAN/backbone routing · Zone 2→Zone 3 link · SD-WAN aggregation · Juniper Mist AI ops',{cls:'net',label:'WAN / Backbone'})}
+    ${card(svgPTX10000(),'Juniper PTX Series','WAN/backbone routing · Zone 2→Zone 1 link · SD-WAN aggregation · Juniper Mist AI ops',{cls:'net',label:'WAN / Backbone'})}
+    ${card(svgSpectrumX(),'NVIDIA Spectrum-X Ethernet','Scale-across inference clusters at regional POP · RoCE v2 · 400GbE',{cls:'net',label:'Scale-Across'})}
   </div></div>
   <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
     ${card(svgAlletra10K(),'HPE Alletra 10K','STX + BF4 certified · Fast KV cache movement across fabric · Regional model cache · Sub-ms inference tier',{cls:'storage',label:'KV Cache Tier (STX)'})}
-    ${card(svgAlletraMP(),'HPE Alletra MP','Regional model repository · Larger dataset staging · Model version management',{cls:'storage',label:'Model Repository'})}
   </div></div>
   ${swStack([
     ['NVIDIA NIM microservices','ai'],['Triton + TensorRT-LLM','ai'],['NVIDIA Dynamo','ai'],
     ['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
-    ['HPE Morpheus','hp'],['Juniper Mist AI','inf'],['Prometheus + Grafana','inf']
+    ['HPE Morpheus','hp'],['Juniper Mist AI','hp'],['Prometheus + Grafana','inf']
   ])}`;
 }
 
 function buildZ1() {
   return `
   <div class="zh">
-    <span class="zh-badge z1">Zone 2</span>
+    <span class="zh-badge z1">Zone 3</span>
     <div>
-      <div class="zh-city">San Jose, CA — Near Edge</div>
+      <div class="zh-city">San Jose, CA — Far Edge</div>
       <div class="zh-desc">On-site / plant floor inference · Low-latency, local model serving · DL145 for constrained sites + DL380 for higher token throughput · Juniper QFX5130 ToR + SRX gateway</div>
     </div>
   </div>
@@ -470,19 +470,17 @@ function buildZ1() {
     ${card(svgServer1U('DL145 RTX6000','#00B388',true),'HPE DL145 Gen11','RTX Pro 6000 (96GB) · 1U · Larger context windows at edge · Primary near-edge workhorse',{cls:'compute',label:'RTX Pro 6000 · 96GB'},'w3')}
     ${card(svgServer2U(['RTX Pro 6000 ×multi','Higher token throughput']),'HPE DL380 Gen11','Multi-GPU RTX Pro 6000 · Higher token throughput · Larger model serving where power allows',{cls:'compute',label:'Multi-GPU Edge'},'w3')}
   </div></div>
-  <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
     ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD · 400GbE uplinks to WAN gateway · Latest-gen access switching',{cls:'net',label:'100GbE ToR'})}
-    ${card(svgSRX(),'Juniper SRX Series','Edge firewall · Secure WAN gateway · Zone 1→Zone 2 encrypted uplink · Juniper SD-WAN',{cls:'net',label:'Edge FW / WAN GW'})}
+    ${card(svgSRX(),'Juniper SRX Series','Edge firewall · Secure WAN gateway · Zone 1→Zone 3 encrypted uplink · Juniper SD-WAN',{cls:'net',label:'Edge FW / WAN GW'})}
     ${card(svgArubaAP(),'HPE Aruba AP','Wi-Fi 6E · Wireless edge devices · OT/IT wireless convergence · Mist AI managed',{cls:'net',label:'Wi-Fi 6E'})}
   </div></div>
   <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
-    ${card(svgAlletra10K(),'HPE Alletra 10K','STX + BF4 certified · KV cache disaggregation · Inference logs · Local model cache · Fast fabric movement',{cls:'storage',label:'KV Cache Tier (STX)'})}
-    ${card(svgAlletraMP(),'HPE Alletra MP','Local model repository · Feature store · Extended capacity at higher-traffic near-edge sites',{cls:'storage',label:'Model Repo / Feature Store'})}
+    ${card(svgAlletra10K(),'HPE Alletra 10K','STX certified · KV cache disaggregation · Inference logs · Local model cache · Fast fabric movement',{cls:'storage',label:'KV Cache Tier (STX)'})}
   </div></div>
   ${swStack([
     ['NVIDIA NIM microservices','ai'],['NVIDIA Triton','ai'],['NVIDIA AI Enterprise','ai'],['NVIDIA Dynamo','ai'],
-    ['HPE Morpheus (edge orchestration)','hp'],['Juniper Mist AI','inf'],['Juniper Apstra','inf']
+    ['HPE Morpheus (edge orchestration)','hp'],['Juniper Mist AI','hp'],['Juniper Apstra','hp']
   ])}`;
 }
 
@@ -560,7 +558,7 @@ function drawMap() {
       var g = svg.append('g').attr('class','mz-ex').attr('data-zone','z1')
         .style('cursor','pointer').on('click', ()=>switchZone('z1'));
       g.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',6).attr('class','mz1');
-      g.append('text').attr('x',p[0]+12).attr('y',p[1]+4).attr('class','maplbl maplbl-z1').text('Zone 2 — San Jose ★');
+      g.append('text').attr('x',p[0]+12).attr('y',p[1]+4).attr('class','maplbl maplbl-z1').text('Zone 3 — San Jose ★');
     } else {
       svg.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',4.5).attr('class','mz1');
     }
@@ -575,7 +573,7 @@ function drawMap() {
       var g = svg.append('g').attr('class','mz-ex').attr('data-zone','z2')
         .style('cursor','pointer').on('click', ()=>switchZone('z2'));
       g.append('circle').attr('cx',pp[0]).attr('cy',pp[1]).attr('r',10).attr('class','mz2');
-      g.append('text').attr('x',pp[0]+p.dx+2).attr('y',pp[1]+p.dy).attr('text-anchor',p.anc).attr('class','maplbl maplbl-z2').text('Zone 3 — Atlanta ★');
+      g.append('text').attr('x',pp[0]+p.dx+2).attr('y',pp[1]+p.dy).attr('text-anchor',p.anc).attr('class','maplbl maplbl-z2').text('Zone 2 — Atlanta ★');
     } else {
       var g2 = svg.append('g');
       g2.append('circle').attr('cx',pp[0]).attr('cy',pp[1]).attr('r',8).attr('class','mz2');
