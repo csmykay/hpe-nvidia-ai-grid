@@ -368,12 +368,13 @@ function svgArubaAP() {
 
 /* ===== ZONE PANEL CONTENT ===== */
 
-function card(svgHtml, name, spec, tag, extraClass='') {
+function card(svgHtml, name, spec, tag, extraClass='', swChips=[]) {
+  const chips = swChips.length ? `<div class="sw-row" style="margin-top:5px">${swChips.map(([l,t])=>`<span class="sc ${t}">${l}</span>`).join('')}</div>` : '';
   return `<div class="pcard ${extraClass}">
     <div class="psvg">${svgHtml}</div>
     <div class="pname">${name}</div>
     <div class="pspec">${spec}</div>
-    <span class="ptag ${tag.cls}">${tag.label}</span>
+    <span class="ptag ${tag.cls}">${tag.label}</span>${chips}
   </div>`;
 }
 
@@ -403,14 +404,24 @@ function buildZ3() {
       <div class="zh-desc">Central AI training and large-model inference hub · 800GbE fabric · Full HPE Cray + DL380a mixed-GPU pool · InfiniBand GPU-GPU fabric</div>
     </div>
   </div>
+  ${swStack([
+    ['NVIDIA NeMo / NeMo Microservices','ai'],['NVIDIA Dynamo','ai'],['NVIDIA Run:ai','ai'],
+    ['NVIDIA AI Enterprise','ai'],['NVIDIA NIM microservices','ai'],['NVIDIA Triton + TRT-LLM','ai'],
+    ['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
+    ['NGC Private Registry','inf'],['Prometheus + Grafana','inf'],['Juniper Apstra + Mist AI','hp']
+  ])}
   <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
-    ${card(svgXD670(),'HPE Cray XD670','8× NVIDIA HGX H200 / B200 GPUs · Dense training + large model serving · NVLink fabric on-board',{cls:'compute',label:'Training / Large Inference'})}
-    ${card(svgServer2U(['H100 / H200','L40S  ·  RTX Pro 6000']),'HPE DL380a Gen11','Mixed-GPU flexible pool · H100/H200 for LLM · L40S for vision/multimodal · RTX Pro 6000 for dev workloads',{cls:'compute',label:'Mixed-GPU Inference'})}
+    ${card(svgXD670(),'HPE Cray XD670','8× NVIDIA HGX H200 / B200 GPUs · Dense training + large model serving · NVLink fabric on-board',{cls:'compute',label:'Training / Large Inference'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H100 / H200','L40S  ·  RTX Pro 6000']),'HPE DL380a Gen11','Mixed-GPU flexible pool · H100/H200 for LLM · L40S for vision/multimodal · RTX Pro 6000 for dev workloads',{cls:'compute',label:'Mixed-GPU Inference'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
   </div></div>
   <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
-    ${card(svgPTX10000(),'Juniper PTX10000','800GbE spine routing · Core inter-zone backbone · PTX10003 inter-zone WAN · Juniper Apstra intent-based automation',{cls:'net',label:'800GbE Spine'})}
-    ${card(svgQFX5240(),'Juniper QFX5240','400GbE leaf / ToR · Server-facing 100GbE downlinks · 400GbE uplinks to PTX spine · EVPN-VXLAN',{cls:'net',label:'400GbE Leaf/ToR'})}
+    ${card(svgPTX10000(),'Juniper PTX10000','800GbE spine routing · Core inter-zone backbone · PTX10003 inter-zone WAN · Juniper Apstra intent-based automation',{cls:'net',label:'800GbE Spine'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgQFX5240(),'Juniper QFX5240','400GbE leaf / ToR · Server-facing 100GbE downlinks · 400GbE uplinks to PTX spine · EVPN-VXLAN',{cls:'net',label:'400GbE Leaf/ToR'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
     ${card(svgIBSwitch(),'NVIDIA InfiniBand Quantum-2','GPU-to-GPU training fabric · HDR200 / NDR · SHARP in-network compute · Used only within HGX cluster',{cls:'net',label:'GPU-GPU Fabric'})}
     ${card(svgSpectrumX(),'NVIDIA Spectrum-X Ethernet','Scale-across multi-rack inference clusters · RoCE v2 · Complements Juniper north-south fabric',{cls:'net',label:'Scale-Across'})}
   </div></div>
@@ -418,13 +429,7 @@ function buildZ3() {
     ${card(svgAlletraMP(),'HPE Alletra MP B10000','All-NVMe · Primary AI training datasets · Model checkpointing · High IOPS parallel access',{cls:'storage',label:'Training Tier'},'w1')}
     ${card(svgAlletra10K(),'HPE Alletra 10K','STX certified + BF4 · Fast KV cache tier · Model promotion to edge zones · Sub-ms latency',{cls:'storage',label:'KV Cache / Promotion'})}
     ${card(svgClusterStor(),'HPE ClusterStor E1000','Lustre parallel file system · HPC-scale training jobs · High-throughput checkpoint streaming',{cls:'storage',label:'Parallel FS (Lustre)'})}
-  </div></div>
-  ${swStack([
-    ['NVIDIA NeMo / NeMo Microservices','ai'],['NVIDIA Dynamo','ai'],['NVIDIA Run:ai','ai'],
-    ['NVIDIA AI Enterprise','ai'],['NVIDIA NIM microservices','ai'],['NVIDIA Triton + TRT-LLM','ai'],
-    ['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
-    ['NGC Private Registry','inf'],['Prometheus + Grafana','inf'],['Juniper Apstra + Mist AI','hp']
-  ])}`;
+  </div></div>`;
 }
 
 function buildZ2() {
@@ -433,28 +438,29 @@ function buildZ2() {
     <span class="zh-badge z2">Zone 2</span>
     <div>
       <div class="zh-city">Atlanta, GA — Near Edge / Regional POP</div>
-      <div class="zh-desc">Regional POP · DL145 for power-constrained sites + DL380 for higher token throughput · KV cache disaggregation via BF4 + Alletra 10K · Spillover routing to Dallas core via Juniper PTX</div>
+      <div class="zh-desc">Regional POP · DL380 for higher token throughput · KV cache disaggregation via BF4 + Alletra 10K · Spillover routing to Dallas core via Juniper PTX</div>
     </div>
   </div>
+  ${swStack([
+    ['NVIDIA NIM microservices','ai'],['Triton + TensorRT-LLM','ai'],['NVIDIA Dynamo','ai'],
+    ['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
+    ['HPE Morpheus','hp'],['Juniper Mist AI (Managed)','hp']
+  ])}
   <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
-    ${card(svgServer1U('DL145 RTX4500','#00B388',true),'HPE DL145 Gen11','NVIDIA RTX Pro 4500 (16GB) · 1U AMD platform · Lightweight inference · Lower power envelope sites',{cls:'compute',label:'RTX Pro 4500 · 16GB'})}
-    ${card(svgServer1U('DL145 RTX6000','#00B388',true),'HPE DL145 Gen11','NVIDIA RTX Pro 6000 (96GB) · 1U AMD platform · Larger model serving within power budget',{cls:'compute',label:'RTX Pro 6000 · 96GB'})}
-    ${card(svgServer2U(['RTX Pro 6000 ×multi','Higher token throughput']),'HPE DL380 Gen11','Multi-GPU RTX Pro 6000 · Higher token throughput · Larger model serving where power allows',{cls:'compute',label:'Multi-GPU Edge'})}
+    ${card(svgServer2U(['RTX Pro 6000 ×multi','Higher token throughput']),'HPE DL380 Gen11','Multi-GPU RTX Pro 6000 · Higher token throughput · Larger model serving where power allows',{cls:'compute',label:'Multi-GPU Edge'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
   </div></div>
   <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
-    ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD ports · 400GbE uplinks to PTX · Latest-gen Juniper campus/edge ToR',{cls:'net',label:'100GbE ToR'})}
-    ${card(svgPTX10000(),'Juniper PTX Series','WAN/backbone routing · Zone 2→Zone 1 link · SD-WAN aggregation · Juniper Mist AI ops',{cls:'net',label:'WAN / Backbone'})}
+    ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD ports · 400GbE uplinks to PTX · Latest-gen Juniper campus/edge ToR',{cls:'net',label:'100GbE ToR'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgPTX10000(),'Juniper PTX Series','WAN/backbone routing · Zone 2→Zone 1 link · SD-WAN aggregation · Juniper Mist AI ops',{cls:'net',label:'WAN / Backbone'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
     ${card(svgSpectrumX(),'NVIDIA Spectrum-X Ethernet','Scale-across inference clusters at regional POP · RoCE v2 · 400GbE',{cls:'net',label:'Scale-Across'})}
   </div></div>
   <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
     ${card(svgAlletra10K(),'HPE Alletra 10K','STX + BF4 certified · Fast KV cache movement across fabric · Regional model cache · Sub-ms inference tier',{cls:'storage',label:'KV Cache Tier (STX)'})}
-  </div></div>
-  ${swStack([
-    ['NVIDIA NIM microservices','ai'],['Triton + TensorRT-LLM','ai'],['NVIDIA Dynamo','ai'],
-    ['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
-    ['HPE Morpheus','hp'],['Juniper Mist AI (Managed)','hp'],['Prometheus + Grafana','inf']
-  ])}`;
+  </div></div>`;
 }
 
 function buildZ1() {
@@ -466,19 +472,23 @@ function buildZ1() {
       <div class="zh-desc">On-site / plant floor inference · Low-latency, local model serving · DL145 for constrained sites · Juniper QFX5130 ToR + SRX gateway</div>
     </div>
   </div>
-  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
-    ${card(svgServer1U('DL145 RTX4500','#00B388',true),'HPE DL145 Gen11','RTX Pro 4500 (16GB) · 1U compact · Low-power sites · Smaller model serving',{cls:'compute',label:'RTX Pro 4500 · Low Power'})}
-    ${card(svgServer1U('DL145 RTX6000','#00B388',true),'HPE DL145 Gen11','RTX Pro 6000 (96GB) · 1U · Larger context windows at edge · Primary far-edge workhorse',{cls:'compute',label:'RTX Pro 6000 · 96GB'})}
-  </div></div>
-  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
-    ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD · 400GbE uplinks to WAN gateway · Latest-gen access switching',{cls:'net',label:'100GbE ToR'})}
-    ${card(svgSRX(),'Juniper SRX Series','Edge firewall · Secure WAN gateway · Zone 1→Zone 3 encrypted uplink · Juniper SD-WAN',{cls:'net',label:'Edge FW / WAN GW'})}
-    ${card(svgArubaAP(),'HPE Aruba AP','Wi-Fi 6E · Wireless edge devices · OT/IT wireless convergence · Aruba Central managed',{cls:'net',label:'Wi-Fi 6E'})}
-  </div></div>
   ${swStack([
     ['NVIDIA NIM microservices','ai'],['NVIDIA Triton','ai'],['NVIDIA AI Enterprise','ai'],['NVIDIA Dynamo','ai'],
     ['HPE Morpheus (edge orchestration)','hp'],['Juniper Mist AI (Managed)','hp']
-  ])}`;
+  ])}
+  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
+    ${card(svgServer1U('DL145 RTX4500','#00B388',true),'HPE DL145 Gen11','RTX Pro 4500 (16GB) · 1U compact · Low-power sites · Smaller model serving',{cls:'compute',label:'RTX Pro 4500 · Low Power'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer1U('DL145 RTX6000','#00B388',true),'HPE DL145 Gen11','RTX Pro 6000 (96GB) · 1U · Larger context windows at edge · Primary far-edge workhorse',{cls:'compute',label:'RTX Pro 6000 · 96GB'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
+    ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD · 400GbE uplinks to WAN gateway · Latest-gen access switching',{cls:'net',label:'100GbE ToR'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgSRX(),'Juniper SRX Series','Edge firewall · Secure WAN gateway · Zone 1→Zone 3 encrypted uplink · Juniper SD-WAN',{cls:'net',label:'Edge FW / WAN GW'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgArubaAP(),'HPE Aruba AP','Wi-Fi 6E · Wireless edge devices · OT/IT wireless convergence · Aruba Central managed',{cls:'net',label:'Wi-Fi 6E'})}
+  </div></div>`;
 }
 
 // Inject panel content
