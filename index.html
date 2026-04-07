@@ -450,11 +450,11 @@ function buildZ2() {
     <span class="zh-badge z2">Zone 2</span>
     <div>
       <div class="zh-city">Atlanta, GA — Near Edge / Regional POP</div>
-      <div class="zh-desc">Regional POP · DL380 for higher token throughput · KV cache disaggregation via BF4 + Alletra 10K · Spillover routing to Dallas core via Juniper PTX</div>
+      <div class="zh-desc">Regional POP · DL380 for higher token throughput · NVIDIA Dynamo — local inference routing, KV-cache-aware placement · Spillover routing to Dallas core via Juniper PTX</div>
     </div>
   </div>
   ${swStack([
-    ['NVIDIA NIM microservices','ai'],['Triton + TensorRT-LLM','ai'],['NVIDIA Dynamo','ai'],
+    ['NVIDIA NIM (Dynamo delivery)','ai'],['NVIDIA Dynamo Triton + TRT-LLM','ai'],['NVIDIA Dynamo (inference platform)','ai'],
     ['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
     ['HPE Morpheus','hp'],['Juniper Mist AI (Managed)','hp']
   ])}
@@ -481,11 +481,11 @@ function buildZ1() {
     <span class="zh-badge z1">Zone 3</span>
     <div>
       <div class="zh-city">San Jose, CA — Far Edge</div>
-      <div class="zh-desc">On-site / plant floor inference · Low-latency, local model serving · DL145 for constrained sites · Juniper QFX5130 ToR + SRX gateway</div>
+      <div class="zh-desc">On-site / plant floor inference · Low-latency, local model serving · NVIDIA Dynamo — regional spillover routing, KV-cache hit optimization · DL145 for constrained sites · Juniper QFX5130 ToR + SRX gateway</div>
     </div>
   </div>
   ${swStack([
-    ['NVIDIA NIM microservices','ai'],['NVIDIA Triton','ai'],['NVIDIA AI Enterprise','ai'],['NVIDIA Dynamo','ai'],
+    ['NVIDIA NIM (Dynamo delivery)','ai'],['NVIDIA Dynamo Triton + TRT-LLM','ai'],['NVIDIA AI Enterprise','ai'],['NVIDIA Dynamo (inference platform)','ai'],
     ['HPE Morpheus (edge orchestration)','hp'],['Juniper Mist AI (Managed)','hp']
   ])}
   <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
