@@ -433,12 +433,13 @@ function buildZ2() {
     <span class="zh-badge z2">Zone 2</span>
     <div>
       <div class="zh-city">Atlanta, GA — Near Edge / Regional POP</div>
-      <div class="zh-desc">Power-constrained regional POP · DL145 only · KV cache disaggregation via BF4 + Alletra 10K · Spillover routing to Dallas core via Juniper PTX</div>
+      <div class="zh-desc">Regional POP · DL145 for power-constrained sites + DL380 for higher token throughput · KV cache disaggregation via BF4 + Alletra 10K · Spillover routing to Dallas core via Juniper PTX</div>
     </div>
   </div>
-  <div class="sec"><div class="sec-lbl">Compute — power constrained, DL145 only</div><div class="pgrid">
+  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
     ${card(svgServer1U('DL145 RTX4500','#00B388',true),'HPE DL145 Gen11','NVIDIA RTX Pro 4500 (16GB) · 1U AMD platform · Lightweight inference · Lower power envelope sites',{cls:'compute',label:'RTX Pro 4500 · 16GB'})}
     ${card(svgServer1U('DL145 RTX6000','#00B388',true),'HPE DL145 Gen11','NVIDIA RTX Pro 6000 (96GB) · 1U AMD platform · Larger model serving within power budget',{cls:'compute',label:'RTX Pro 6000 · 96GB'})}
+    ${card(svgServer2U(['RTX Pro 6000 ×multi','Higher token throughput']),'HPE DL380 Gen11','Multi-GPU RTX Pro 6000 · Higher token throughput · Larger model serving where power allows',{cls:'compute',label:'Multi-GPU Edge'})}
   </div></div>
   <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
@@ -462,13 +463,12 @@ function buildZ1() {
     <span class="zh-badge z1">Zone 3</span>
     <div>
       <div class="zh-city">San Jose, CA — Far Edge</div>
-      <div class="zh-desc">On-site / plant floor inference · Low-latency, local model serving · DL145 for constrained sites + DL380 for higher token throughput · Juniper QFX5130 ToR + SRX gateway</div>
+      <div class="zh-desc">On-site / plant floor inference · Low-latency, local model serving · DL145 for constrained sites · Juniper QFX5130 ToR + SRX gateway</div>
     </div>
   </div>
   <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
-    ${card(svgServer1U('DL145 RTX4500','#00B388',true),'HPE DL145 Gen11','RTX Pro 4500 (16GB) · 1U compact · Low-power sites · Smaller model serving',{cls:'compute',label:'RTX Pro 4500 · Low Power'},'w3')}
-    ${card(svgServer1U('DL145 RTX6000','#00B388',true),'HPE DL145 Gen11','RTX Pro 6000 (96GB) · 1U · Larger context windows at edge · Primary near-edge workhorse',{cls:'compute',label:'RTX Pro 6000 · 96GB'},'w3')}
-    ${card(svgServer2U(['RTX Pro 6000 ×multi','Higher token throughput']),'HPE DL380 Gen11','Multi-GPU RTX Pro 6000 · Higher token throughput · Larger model serving where power allows',{cls:'compute',label:'Multi-GPU Edge'},'w3')}
+    ${card(svgServer1U('DL145 RTX4500','#00B388',true),'HPE DL145 Gen11','RTX Pro 4500 (16GB) · 1U compact · Low-power sites · Smaller model serving',{cls:'compute',label:'RTX Pro 4500 · Low Power'})}
+    ${card(svgServer1U('DL145 RTX6000','#00B388',true),'HPE DL145 Gen11','RTX Pro 6000 (96GB) · 1U · Larger context windows at edge · Primary far-edge workhorse',{cls:'compute',label:'RTX Pro 6000 · 96GB'})}
   </div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
     ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD · 400GbE uplinks to WAN gateway · Latest-gen access switching',{cls:'net',label:'100GbE ToR'})}
