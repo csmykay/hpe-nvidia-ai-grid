@@ -97,6 +97,28 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
 .maplbl-z1{fill:#85B7EB;font-size:10px}
 .pulse-ring{fill:none;animation:pulse 2s ease-out infinite}
 @keyframes pulse{0%{r:12;opacity:.7}100%{r:24;opacity:0}}
+
+/* Drill-down entry cards */
+.pcard.drill{border-color:#1a6040;cursor:pointer;background:#0a1f14}
+.pcard.drill:hover{border-color:#00B388;background:#0d2618}
+.drill-name{font-size:12px;font-weight:700;color:#00B388;line-height:1.25;margin-bottom:4px}
+.ptag.hp-tag{background:#0a1f14;color:#00B388;border:1px solid #1a6040}
+
+/* Detail overlay */
+#detail-col{position:relative}
+.doverlay{position:absolute;inset:0;background:#1a1a16;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease;z-index:10;overflow:hidden}
+.doverlay.open{transform:translateX(0)}
+.doverlay-hdr{display:flex;align-items:center;gap:12px;padding:9px 14px;background:#111110;border-bottom:2px solid #00B388;flex-shrink:0}
+.doverlay-back{font-size:11px;font-weight:600;color:#00B388;background:none;border:1px solid #1a6040;cursor:pointer;padding:3px 10px;border-radius:3px}
+.doverlay-back:hover{background:#0a1f14}
+.doverlay-title{font-size:13px;font-weight:700;color:#e0ddd5;flex:1}
+.doverlay-ext{font-size:10px;color:#555;text-decoration:none;padding:3px 7px;border:1px solid #333;border-radius:3px;white-space:nowrap}
+.doverlay-ext:hover{color:#888;border-color:#555}
+.doverlay-body{flex:1;overflow-y:auto;padding:14px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+
+/* External data source cards */
+.pcard.ext-src{border-color:#2a2520;background:#141210}
+.ext-lbl{font-size:8.5px;font-weight:600;padding:1.5px 5px;border-radius:2px;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;display:inline-block;background:#1a1000;color:#C88020;border:1px solid #8a5010}
 </style>
 </head>
 <body>
@@ -155,6 +177,17 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
       <div id="pz1" class="panel"></div>
 
     </div>
+
+    <!-- PCAI / DF OVERLAY -->
+    <div id="detail-overlay" class="doverlay">
+      <div class="doverlay-hdr">
+        <button class="doverlay-back" onclick="closeOverlay()">← AI Grid</button>
+        <span id="overlay-title" class="doverlay-title"></span>
+        <a id="overlay-standalone" href="#" target="_blank" class="doverlay-ext">Open standalone ↗</a>
+      </div>
+      <div id="overlay-body" class="doverlay-body"></div>
+    </div>
+
   </div>
 </div>
 </div>
@@ -378,6 +411,176 @@ function svgArubaAP() {
   </svg>`;
 }
 
+/* ===== PCAI / DF SVG ILLUSTRATIONS ===== */
+
+function svgGL4F() {
+  const rows = [...Array(4)].map((_,i)=>`<rect x="42" y="${7+i*5}" width="${30+i*8}" height="3.5" rx=".4" fill="#252525" stroke="#00B388" stroke-width=".3" opacity="${0.35+i*0.15}"/>`).join('');
+  return `<svg viewBox="0 0 100 32" width="100" height="32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="32" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="31" rx="1.5" fill="#1c1c1c"/>
+    <rect x=".5" y=".5" width="99" height="3" rx="1" fill="#00B388"/>
+    <ellipse cx="20" cy="17" rx="11" ry="6" fill="#0a1f14" stroke="#00B388" stroke-width=".7" opacity=".9"/>
+    <ellipse cx="27" cy="13" rx="7" ry="5" fill="#0a1f14" stroke="#00B388" stroke-width=".7" opacity=".9"/>
+    <line x1="12" y1="23" x2="12" y2="27" stroke="#00B388" stroke-width=".7" opacity=".6"/>
+    <line x1="20" y1="23" x2="20" y2="27" stroke="#00B388" stroke-width=".7" opacity=".6"/>
+    <line x1="28" y1="23" x2="28" y2="27" stroke="#00B388" stroke-width=".7" opacity=".6"/>
+    ${rows}
+    <text x="50" y="30.5" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">HPE GreenLake for File · GL4F</text>
+  </svg>`;
+}
+
+function svgSpectrum() {
+  const ports = [...Array(16)].map((_,i)=>`<rect x="${4+i*5.6}" y="4" width="4" height="5" rx=".4" fill="#111" stroke="#76B900" stroke-width=".4"/>
+    <rect x="${4+i*5.6}" y="10" width="4" height="5" rx=".4" fill="#111" stroke="#555" stroke-width=".3" opacity=".5"/>`).join('');
+  return `<svg viewBox="0 0 100 22" width="100" height="22" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="22" rx="2" fill="#080808"/>
+    <rect x=".5" y=".5" width="99" height="21" rx="1.5" fill="#111"/>
+    <rect x=".5" y=".5" width="4" height="21" rx="1" fill="#76B900" opacity=".55"/>
+    ${ports}
+    <circle cx="92" cy="8" r="1.5" fill="#76B900" opacity=".8"/>
+    <text x="91" y="18" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">Spectrum</text>
+  </svg>`;
+}
+
+function svgDataFabric() {
+  const lanes = [0,1,2].map(i=>`
+    <rect x="6" y="${8+i*9}" width="88" height="6" rx="1" fill="#0a1f14" stroke="#00B388" stroke-width=".4" opacity=".7"/>
+    <rect x="8" y="${9+i*9}" width="${18+i*10}" height="4" rx=".5" fill="#00B388" opacity="${0.25+i*0.1}"/>
+  `).join('');
+  return `<svg viewBox="0 0 100 40" width="100" height="40" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="40" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="39" rx="1.5" fill="#1c1c1c"/>
+    <rect x=".5" y=".5" width="99" height="3" rx="1" fill="#00B388"/>
+    ${lanes}
+    <text x="50" y="38.5" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">HPE Ezmeral Data Fabric</text>
+  </svg>`;
+}
+
+function svgSnowflake() {
+  return `<svg viewBox="0 0 100 28" width="100" height="28" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="28" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="27" rx="1.5" fill="#14191f"/>
+    <rect x=".5" y=".5" width="99" height="2" rx="1" fill="#29B5E8" opacity=".9"/>
+    <text x="16" y="20" font-family="monospace" font-size="14" fill="#29B5E8" text-anchor="middle" opacity=".85">❄</text>
+    <text x="58" y="13" font-family="-apple-system,sans-serif" font-size="7.5" fill="#29B5E8" font-weight="700" text-anchor="middle">Snowflake</text>
+    <text x="58" y="22" font-family="monospace" font-size="4" fill="#555" text-anchor="middle">Cloud Data Platform</text>
+  </svg>`;
+}
+
+function svgDatabricks() {
+  return `<svg viewBox="0 0 100 28" width="100" height="28" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="28" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="27" rx="1.5" fill="#1e1814"/>
+    <rect x=".5" y=".5" width="99" height="2" rx="1" fill="#FF3621" opacity=".9"/>
+    <polygon points="14,6 22,14 14,22 6,14" fill="#FF3621" opacity=".75"/>
+    <text x="59" y="13" font-family="-apple-system,sans-serif" font-size="7.5" fill="#FF6B55" font-weight="700" text-anchor="middle">Databricks</text>
+    <text x="59" y="22" font-family="monospace" font-size="4" fill="#555" text-anchor="middle">Lakehouse Platform</text>
+  </svg>`;
+}
+
+function svgS3() {
+  return `<svg viewBox="0 0 100 28" width="100" height="28" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="28" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="27" rx="1.5" fill="#141a10"/>
+    <rect x=".5" y=".5" width="99" height="2" rx="1" fill="#569A31" opacity=".9"/>
+    <ellipse cx="16" cy="11" rx="8" ry="4" fill="#2d5016" stroke="#569A31" stroke-width=".6"/>
+    <rect x="8" y="11" width="16" height="8" fill="#2d5016" opacity=".9"/>
+    <ellipse cx="16" cy="19" rx="8" ry="4" fill="#3a6620" stroke="#569A31" stroke-width=".6" opacity=".7"/>
+    <text x="59" y="13" font-family="-apple-system,sans-serif" font-size="7.5" fill="#7DBF4A" font-weight="700" text-anchor="middle">S3 Object Store</text>
+    <text x="59" y="22" font-family="monospace" font-size="4" fill="#555" text-anchor="middle">AWS / Compatible</text>
+  </svg>`;
+}
+
+/* ===== DRILL-DOWN OVERLAY ===== */
+
+function drillCard(title, desc, type) {
+  return `<div class="pcard drill" onclick="openOverlay('${type}')">
+    <div class="drill-name">↗ ${title}</div>
+    <div class="pspec">${desc}</div>
+    <span class="ptag hp-tag">Explore Layer</span>
+  </div>`;
+}
+
+function openOverlay(type) {
+  document.getElementById('overlay-body').innerHTML = type === 'pcai' ? buildPCAI() : buildDF();
+  document.getElementById('overlay-title').textContent = type === 'pcai' ? 'HPE Private Cloud AI' : 'HPE Ezmeral Data Fabric';
+  document.getElementById('overlay-standalone').href = type === 'pcai' ? 'pcai/' : 'df/';
+  document.getElementById('detail-overlay').classList.add('open');
+  document.getElementById('overlay-body').scrollTop = 0;
+}
+
+function closeOverlay() {
+  document.getElementById('detail-overlay').classList.remove('open');
+}
+
+/* ===== PCAI PANEL ===== */
+
+function buildPCAI() {
+  return `
+  <div class="zh">
+    <span class="zh-badge" style="background:#0d2618;color:#00B388;border:1px solid #1a6040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;padding:3px 8px;border-radius:3px;flex-shrink:0;margin-top:2px">PCAI</span>
+    <div>
+      <div class="zh-city">HPE Private Cloud AI</div>
+      <div class="zh-desc">Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise integrated · Mixed H200 + RTX Pro 6000 compute · GreenLake for File (GL4F) storage · NVIDIA Spectrum fabric</div>
+    </div>
+  </div>
+  ${swStack([
+    ['JupyterHub','inf'],['MLflow','inf'],['KubeFlow','inf'],
+    ['NVIDIA NIM microservices','ai'],['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
+    ['HPE Private Cloud AI','hp'],['HPE Ezmeral Runtime Enterprise','hp'],['HPE Morpheus','hp']
+  ])}
+  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
+    ${card(svgServer2U(['RTX Pro 6000','Small inference']),'Small — HPE ProLiant DL','1–2 servers · RTX Pro 6000 (96GB) · Dev workloads + small model inference · Entry PCAI configuration',{cls:'compute',label:'S · RTX Pro 6000'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H200 + RTX Pro 6000','Mixed GPU']),'Medium — HPE ProLiant DL','2–4 servers · Mixed H200 + RTX Pro 6000 · Mid-scale inference + fine-tuning · Balanced GPU pool',{cls:'compute',label:'M · H200 + RTX Pro 6000'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H200 (primary)','RTX Pro 6000 (dev)']),'Large — HPE ProLiant DL','8 servers · H200 primary for large LLMs · RTX Pro 6000 for multimodal + dev · Maximum density configuration',{cls:'compute',label:'L · H200 Primary'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
+    ${card(svgGL4F(),'HPE GreenLake for File (GL4F)','Hybrid cloud file storage · Model checkpointing · Training datasets · Scalable NFS/SMB access · GreenLake consumption model · Elastic capacity',{cls:'storage',label:'GL4F · Hybrid File'},'w1')}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
+    ${card(svgSpectrumX(),'NVIDIA Spectrum-X','East-west GPU fabric · RoCE v2 · In-cluster AI traffic · Scale-out inference · High-bandwidth low-latency GPU-to-GPU',{cls:'net',label:'East-West · GPU Fabric'})}
+    ${card(svgSpectrum(),'NVIDIA Spectrum','North-south fabric · Management + storage traffic · Uplink to core network · ToR switching',{cls:'net',label:'North-South · ToR'})}
+  </div></div>`;
+}
+
+/* ===== DATA FABRIC PANEL ===== */
+
+function buildDF() {
+  return `
+  <div class="zh">
+    <span class="zh-badge" style="background:#0d2618;color:#00B388;border:1px solid #1a6040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;padding:3px 8px;border-radius:3px;flex-shrink:0;margin-top:2px">Data Fabric</span>
+    <div>
+      <div class="zh-city">HPE Ezmeral Data Fabric</div>
+      <div class="zh-desc">Unified data layer · Distributed file system + object store + event streaming · Multi-cloud connectivity · Feeds model training in PCAI · External source integration</div>
+    </div>
+  </div>
+  ${swStack([
+    ['HPE Ezmeral Data Fabric','hp'],['HPE Morpheus','hp'],
+    ['Apache Airflow','inf'],['Apache Kafka','inf'],['Apache Spark','inf'],['Apache Iceberg','inf']
+  ])}
+  <div class="sec"><div class="sec-lbl">Core Platform</div><div class="pgrid">
+    ${card(svgDataFabric(),'HPE Ezmeral Data Fabric','Distributed POSIX file system · S3-compatible object store · Apache Kafka event streaming · Global namespace · Multi-protocol access (NFS, S3, HDFS)',{cls:'storage',label:'Distributed Data Platform'},'w1')}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Storage Underpinning</div><div class="pgrid">
+    ${card(svgAlletraMP(),'HPE Alletra MP','High-performance NVMe backing store · Data Fabric persistent layer · High-IOPS dataset access · Primary data tier',{cls:'storage',label:'NVMe Backing Store'},'w1')}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Connected to PCAI</div><div class="pgrid">
+    <div class="pcard drill w1" onclick="openOverlay('pcai')">
+      <div class="drill-name">↗ HPE Private Cloud AI</div>
+      <div class="pspec">Training data pipeline → PCAI · Model artifact storage · Feature store · Real-time inference data feed via Kafka streams</div>
+      <span class="ptag hp-tag">Click to Explore PCAI</span>
+    </div>
+  </div></div>
+  <div class="sec"><div class="sec-lbl">External Data Sources</div><div class="pgrid">
+    ${card(svgSnowflake(),'Snowflake','Cloud data warehouse · Feature engineering datasets · Structured analytics data · Direct connector via Data Fabric',{cls:'storage',label:'Cloud Data Warehouse'})}
+    ${card(svgDatabricks(),'Databricks','Lakehouse platform · Delta Lake tables · Spark-based feature pipelines · Model registry integration',{cls:'storage',label:'Lakehouse Platform'})}
+    ${card(svgS3(),'S3 Object Storage','AWS S3 / S3-compatible · Raw data lake · Model artifact backup · Multi-cloud object tier',{cls:'storage',label:'Object Storage'})}
+  </div></div>`;
+}
+
 /* ===== ZONE PANEL CONTENT ===== */
 
 function card(svgHtml, name, spec, tag, extraClass='', swChips=[]) {
@@ -441,6 +644,10 @@ function buildZ3() {
     ${card(svgAlletraMP(),'HPE Alletra MP B10000','All-NVMe · Primary AI training datasets · Model checkpointing · High IOPS parallel access',{cls:'storage',label:'Training Tier'},'w1')}
     ${card(svgAlletra10K(),'HPE Alletra 10K','STX certified + BF4 · Fast KV cache tier · Model promotion to edge zones · Sub-ms latency',{cls:'storage',label:'KV Cache / Promotion'})}
     ${card(svgClusterStor(),'HPE ClusterStor E1000','Lustre parallel file system · HPC-scale training jobs · High-throughput checkpoint streaming',{cls:'storage',label:'Parallel FS (Lustre)'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Platform Layers</div><div class="pgrid">
+    ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
+    ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
   </div></div>`;
 }
 
@@ -472,6 +679,10 @@ function buildZ2() {
   </div></div>
   <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
     ${card(svgAlletra10K(),'HPE Alletra 10K','STX + BF4 certified · Fast KV cache movement across fabric · Regional model cache · Sub-ms inference tier',{cls:'storage',label:'KV Cache Tier (STX)'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Platform Layers</div><div class="pgrid">
+    ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
+    ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
   </div></div>`;
 }
 

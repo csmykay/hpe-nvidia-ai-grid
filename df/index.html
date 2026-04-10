@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HPE Ezmeral Data Fabric — Reference Architecture</title>
+<link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#121210;color:#e0ddd5}
+#app{display:flex;flex-direction:column;min-height:100vh}
+#hdr{background:#1a1a16;border-bottom:2px solid #00B388;padding:9px 18px;flex-shrink:0;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:5}
+.back-btn{font-size:11px;font-weight:600;color:#00B388;text-decoration:none;padding:3px 10px;border:1px solid #1a6040;border-radius:3px;white-space:nowrap}
+.back-btn:hover{background:#0a1f14}
+#hdr h1{font-size:13px;font-weight:700;color:#e0ddd5;flex:1}
+.hdr-badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:3px;background:#00B388;color:#fff;flex-shrink:0}
+.also-see{font-size:10px;color:#555;text-decoration:none;padding:3px 8px;border:1px solid #333;border-radius:3px;white-space:nowrap}
+.also-see:hover{color:#888;border-color:#555}
+#content{padding:18px;max-width:900px;margin:0 auto;width:100%}
+
+/* Zone header */
+.zh{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #2a2a26}
+.zh-city{font-size:20px;font-weight:700;color:#e0ddd5;line-height:1.1}
+.zh-desc{font-size:10.5px;color:#666;margin-top:3px;line-height:1.4}
+
+/* Sections */
+.sec{margin-bottom:16px}
+.sec-lbl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:#b0ad9e;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:#2a2a26}
+
+/* Product grid */
+.pgrid{display:flex;flex-wrap:wrap;gap:7px}
+.pcard{background:#111110;border:1px solid #2a2a26;border-radius:7px;padding:9px 10px;display:flex;flex-direction:column;width:calc(50% - 4px);transition:border-color .15s}
+.pcard:hover{border-color:#444}
+.pcard.w1{width:100%}
+.psvg{display:block;margin-bottom:7px;border-radius:3px;overflow:hidden}
+.pname{font-size:11px;font-weight:600;color:#e0ddd5;line-height:1.25}
+.pspec{font-size:9.5px;color:#666;margin-top:2px;line-height:1.45}
+.ptag{display:inline-block;font-size:8.5px;font-weight:600;padding:1.5px 5px;border-radius:2px;margin-top:5px;text-transform:uppercase;letter-spacing:.5px}
+.ptag.storage{background:#0d1f2a;color:#4BA8C8;border:1px solid #1a6888}
+.ptag.hp-tag{background:#0a1f14;color:#00B388;border:1px solid #1a6040}
+
+/* Software */
+.sw-row{display:flex;flex-wrap:wrap;gap:5px}
+.sc{font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid;line-height:1}
+.sc.hp{background:#0a1f14;border-color:#1a6040;color:#00B388}
+.sc.inf{background:#1a1000;border-color:#8a5010;color:#C88020}
+
+/* Drill card */
+.pcard.drill{border-color:#1a6040;cursor:pointer;background:#0a1f14;text-decoration:none}
+.pcard.drill:hover{border-color:#00B388;background:#0d2618}
+.drill-name{font-size:12px;font-weight:700;color:#00B388;line-height:1.25;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div id="app">
+<header id="hdr">
+  <a href="../" class="back-btn">← AI Grid</a>
+  <h1>HPE Ezmeral Data Fabric — Reference Architecture</h1>
+  <a href="../pcai/" class="also-see">Also see: HPE Private Cloud AI →</a>
+  <span class="hdr-badge">HPE IP</span>
+</header>
+<div id="content"></div>
+</div>
+
+<script>
+function svgDataFabric() {
+  const lanes = [0,1,2].map(i=>`
+    <rect x="6" y="${8+i*9}" width="88" height="6" rx="1" fill="#0a1f14" stroke="#00B388" stroke-width=".4" opacity=".7"/>
+    <rect x="8" y="${9+i*9}" width="${18+i*10}" height="4" rx=".5" fill="#00B388" opacity="${0.25+i*0.1}"/>
+  `).join('');
+  return `<svg viewBox="0 0 100 40" width="100" height="40" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="40" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="39" rx="1.5" fill="#1c1c1c"/>
+    <rect x=".5" y=".5" width="99" height="3" rx="1" fill="#00B388"/>
+    ${lanes}
+    <text x="50" y="38.5" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">HPE Ezmeral Data Fabric</text>
+  </svg>`;
+}
+
+function svgAlletraMP() {
+  const drives = [...Array(3)].map((_,r)=>[...Array(8)].map((_,c)=>`<rect x="${4+c*11}" y="${5+r*7}" width="9.5" height="5.5" rx=".4" fill="#252525" stroke="#00B388" stroke-width=".3" opacity=".7"/>`).join('')).join('');
+  return `<svg viewBox="0 0 100 32" width="100" height="32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="32" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="31" rx="1.5" fill="#1c1c1c"/>
+    <rect x=".5" y=".5" width="99" height="3" rx="1" fill="#00B388"/>
+    ${drives}
+    <text x="50" y="30.5" font-family="monospace" font-size="4" fill="#444" text-anchor="middle">HPE ALLETRA MP · All-Flash NVMe</text>
+  </svg>`;
+}
+
+function svgSnowflake() {
+  return `<svg viewBox="0 0 100 28" width="100" height="28" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="28" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="27" rx="1.5" fill="#14191f"/>
+    <rect x=".5" y=".5" width="99" height="2" rx="1" fill="#29B5E8" opacity=".9"/>
+    <text x="16" y="20" font-family="monospace" font-size="14" fill="#29B5E8" text-anchor="middle" opacity=".85">❄</text>
+    <text x="58" y="13" font-family="-apple-system,sans-serif" font-size="7.5" fill="#29B5E8" font-weight="700" text-anchor="middle">Snowflake</text>
+    <text x="58" y="22" font-family="monospace" font-size="4" fill="#555" text-anchor="middle">Cloud Data Platform</text>
+  </svg>`;
+}
+
+function svgDatabricks() {
+  return `<svg viewBox="0 0 100 28" width="100" height="28" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="28" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="27" rx="1.5" fill="#1e1814"/>
+    <rect x=".5" y=".5" width="99" height="2" rx="1" fill="#FF3621" opacity=".9"/>
+    <polygon points="14,6 22,14 14,22 6,14" fill="#FF3621" opacity=".75"/>
+    <text x="59" y="13" font-family="-apple-system,sans-serif" font-size="7.5" fill="#FF6B55" font-weight="700" text-anchor="middle">Databricks</text>
+    <text x="59" y="22" font-family="monospace" font-size="4" fill="#555" text-anchor="middle">Lakehouse Platform</text>
+  </svg>`;
+}
+
+function svgS3() {
+  return `<svg viewBox="0 0 100 28" width="100" height="28" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="28" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="27" rx="1.5" fill="#141a10"/>
+    <rect x=".5" y=".5" width="99" height="2" rx="1" fill="#569A31" opacity=".9"/>
+    <ellipse cx="16" cy="11" rx="8" ry="4" fill="#2d5016" stroke="#569A31" stroke-width=".6"/>
+    <rect x="8" y="11" width="16" height="8" fill="#2d5016" opacity=".9"/>
+    <ellipse cx="16" cy="19" rx="8" ry="4" fill="#3a6620" stroke="#569A31" stroke-width=".6" opacity=".7"/>
+    <text x="59" y="13" font-family="-apple-system,sans-serif" font-size="7.5" fill="#7DBF4A" font-weight="700" text-anchor="middle">S3 Object Store</text>
+    <text x="59" y="22" font-family="monospace" font-size="4" fill="#555" text-anchor="middle">AWS / Compatible</text>
+  </svg>`;
+}
+
+function card(svgHtml, name, spec, tag, extraClass='') {
+  return `<div class="pcard ${extraClass}">
+    <div class="psvg">${svgHtml}</div>
+    <div class="pname">${name}</div>
+    <div class="pspec">${spec}</div>
+    <span class="ptag ${tag.cls}">${tag.label}</span>
+  </div>`;
+}
+
+function swStack(chips) {
+  return `<div class="sec"><div class="sec-lbl">Software stack</div>
+    <div class="sw-row">${chips.map(([l,t])=>`<span class="sc ${t}">${l}</span>`).join('')}</div>
+  </div>`;
+}
+
+document.getElementById('content').innerHTML = `
+  <div class="zh">
+    <span class="zh-badge" style="background:#0d2618;color:#00B388;border:1px solid #1a6040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;padding:3px 8px;border-radius:3px;flex-shrink:0;margin-top:2px">Data Fabric</span>
+    <div>
+      <div class="zh-city">HPE Ezmeral Data Fabric</div>
+      <div class="zh-desc">Unified data layer · Distributed file system + object store + event streaming · Multi-cloud connectivity · Feeds model training in PCAI · External source integration</div>
+    </div>
+  </div>
+  ${swStack([
+    ['HPE Ezmeral Data Fabric','hp'],['HPE Morpheus','hp'],
+    ['Apache Airflow','inf'],['Apache Kafka','inf'],['Apache Spark','inf'],['Apache Iceberg','inf']
+  ])}
+  <div class="sec"><div class="sec-lbl">Core Platform</div><div class="pgrid">
+    ${card(svgDataFabric(),'HPE Ezmeral Data Fabric','Distributed POSIX file system · S3-compatible object store · Apache Kafka event streaming · Global namespace · Multi-protocol access (NFS, S3, HDFS)',{cls:'storage',label:'Distributed Data Platform'},'w1')}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Storage Underpinning</div><div class="pgrid">
+    ${card(svgAlletraMP(),'HPE Alletra MP','High-performance NVMe backing store · Data Fabric persistent layer · High-IOPS dataset access · Primary data tier',{cls:'storage',label:'NVMe Backing Store'},'w1')}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Connected to PCAI</div><div class="pgrid">
+    <a href="../pcai/" class="pcard drill w1" style="text-decoration:none">
+      <div class="drill-name">↗ HPE Private Cloud AI</div>
+      <div class="pspec">Training data pipeline → PCAI · Model artifact storage · Feature store · Real-time inference data feed via Kafka streams</div>
+      <span class="ptag hp-tag">Explore PCAI</span>
+    </a>
+  </div></div>
+  <div class="sec"><div class="sec-lbl">External Data Sources</div><div class="pgrid">
+    ${card(svgSnowflake(),'Snowflake','Cloud data warehouse · Feature engineering datasets · Structured analytics data · Direct connector via Data Fabric',{cls:'storage',label:'Cloud Data Warehouse'})}
+    ${card(svgDatabricks(),'Databricks','Lakehouse platform · Delta Lake tables · Spark-based feature pipelines · Model registry integration',{cls:'storage',label:'Lakehouse Platform'})}
+    ${card(svgS3(),'S3 Object Storage','AWS S3 / S3-compatible · Raw data lake · Model artifact backup · Multi-cloud object tier',{cls:'storage',label:'Object Storage'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Also Explore</div><div class="pgrid">
+    <a href="../" class="pcard drill w1" style="text-decoration:none">
+      <div class="drill-name">↗ Back to AI Grid</div>
+      <div class="pspec">Return to the US Reference Architecture · Zone 1 Core · Zone 2 Near Edge · Zone 3 Far Edge</div>
+      <span class="ptag hp-tag">AI Grid Map</span>
+    </a>
+  </div></div>
+`;
+</script>
+</body>
+</html>

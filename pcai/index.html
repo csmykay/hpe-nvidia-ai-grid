@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HPE Private Cloud AI — Reference Architecture</title>
+<link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#121210;color:#e0ddd5}
+#app{display:flex;flex-direction:column;min-height:100vh}
+#hdr{background:#1a1a16;border-bottom:2px solid #00B388;padding:9px 18px;flex-shrink:0;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:5}
+.back-btn{font-size:11px;font-weight:600;color:#00B388;text-decoration:none;padding:3px 10px;border:1px solid #1a6040;border-radius:3px;white-space:nowrap}
+.back-btn:hover{background:#0a1f14}
+#hdr h1{font-size:13px;font-weight:700;color:#e0ddd5;flex:1}
+.hdr-badge{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:3px;background:#00B388;color:#fff;flex-shrink:0}
+.also-see{font-size:10px;color:#555;text-decoration:none;padding:3px 8px;border:1px solid #333;border-radius:3px;white-space:nowrap}
+.also-see:hover{color:#888;border-color:#555}
+#content{padding:18px;max-width:900px;margin:0 auto;width:100%}
+
+/* Zone header */
+.zh{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #2a2a26}
+.zh-city{font-size:20px;font-weight:700;color:#e0ddd5;line-height:1.1}
+.zh-desc{font-size:10.5px;color:#666;margin-top:3px;line-height:1.4}
+
+/* Sections */
+.sec{margin-bottom:16px}
+.sec-lbl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:#b0ad9e;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:#2a2a26}
+
+/* Product grid */
+.pgrid{display:flex;flex-wrap:wrap;gap:7px}
+.pcard{background:#111110;border:1px solid #2a2a26;border-radius:7px;padding:9px 10px;display:flex;flex-direction:column;width:calc(50% - 4px);transition:border-color .15s}
+.pcard:hover{border-color:#444}
+.pcard.w1{width:100%}
+.pcard.w3{width:calc(33.33% - 5px)}
+.psvg{display:block;margin-bottom:7px;border-radius:3px;overflow:hidden}
+.pname{font-size:11px;font-weight:600;color:#e0ddd5;line-height:1.25}
+.pspec{font-size:9.5px;color:#666;margin-top:2px;line-height:1.45}
+.ptag{display:inline-block;font-size:8.5px;font-weight:600;padding:1.5px 5px;border-radius:2px;margin-top:5px;text-transform:uppercase;letter-spacing:.5px}
+.ptag.compute{background:#0a1f40;color:#5B9BD5;border:1px solid #185FA5}
+.ptag.net{background:#1a0f00;color:#C8A020;border:1px solid #8a6010}
+.ptag.storage{background:#0d1f2a;color:#4BA8C8;border:1px solid #1a6888}
+.ptag.hp-tag{background:#0a1f14;color:#00B388;border:1px solid #1a6040}
+
+/* Software */
+.sw-row{display:flex;flex-wrap:wrap;gap:5px}
+.sc{font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid;line-height:1}
+.sc.ai{background:#0a1a0a;border-color:#3a6000;color:#76B900}
+.sc.hp{background:#0a1f14;border-color:#1a6040;color:#00B388}
+.sc.inf{background:#1a1000;border-color:#8a5010;color:#C88020}
+
+/* Drill card */
+.pcard.drill{border-color:#1a6040;cursor:pointer;background:#0a1f14}
+.pcard.drill:hover{border-color:#00B388;background:#0d2618}
+.drill-name{font-size:12px;font-weight:700;color:#00B388;line-height:1.25;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div id="app">
+<header id="hdr">
+  <a href="../" class="back-btn">← AI Grid</a>
+  <h1>HPE Private Cloud AI — Reference Architecture</h1>
+  <a href="../df/" class="also-see">Also see: HPE Data Fabric →</a>
+  <span class="hdr-badge">HPE × NVIDIA</span>
+</header>
+<div id="content"></div>
+</div>
+
+<script>
+function svgServer2U(gpuLabels) {
+  return `<svg viewBox="0 0 100 34" width="100" height="34" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="34" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="33" rx="1.5" fill="#1c1c1c"/>
+    <rect x=".5" y=".5" width="99" height="3" rx="1" fill="#00B388" opacity=".9"/>
+    <rect x="2" y="5" width="7" height="10" rx=".8" fill="#252525" stroke="#333" stroke-width=".5"/>
+    <rect x="11" y="5" width="7" height="10" rx=".8" fill="#252525" stroke="#333" stroke-width=".5"/>
+    <rect x="2" y="17" width="7" height="10" rx=".8" fill="#252525" stroke="#333" stroke-width=".5"/>
+    <rect x="11" y="17" width="7" height="10" rx=".8" fill="#252525" stroke="#333" stroke-width=".5"/>
+    <rect x="22" y="5" width="58" height="10" rx=".8" fill="#111" stroke="#76B900" stroke-width=".8"/>
+    <rect x="22" y="17" width="58" height="10" rx=".8" fill="#111" stroke="#76B900" stroke-width=".6"/>
+    <text x="51" y="12" font-family="monospace" font-size="4.5" fill="#76B900" text-anchor="middle">${gpuLabels[0]||'H200'}</text>
+    <text x="51" y="24" font-family="monospace" font-size="4.5" fill="#76B900" opacity=".7" text-anchor="middle">${gpuLabels[1]||'RTX Pro 6000'}</text>
+    <rect x="83" y="5" width="14" height="6" rx="1" fill="#00B388" opacity=".2"/>
+    <text x="90" y="10" font-family="monospace" font-size="3.5" fill="#00B388" text-anchor="middle">HPE</text>
+    <circle cx="84" cy="14" r="1.5" fill="#00cc44" opacity=".8"/>
+    <circle cx="89" cy="14" r="1.5" fill="#4466ff" opacity=".6"/>
+  </svg>`;
+}
+
+function svgGL4F() {
+  const rows = [...Array(4)].map((_,i)=>`<rect x="42" y="${7+i*5}" width="${30+i*8}" height="3.5" rx=".4" fill="#252525" stroke="#00B388" stroke-width=".3" opacity="${0.35+i*0.15}"/>`).join('');
+  return `<svg viewBox="0 0 100 32" width="100" height="32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="32" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="31" rx="1.5" fill="#1c1c1c"/>
+    <rect x=".5" y=".5" width="99" height="3" rx="1" fill="#00B388"/>
+    <ellipse cx="20" cy="17" rx="11" ry="6" fill="#0a1f14" stroke="#00B388" stroke-width=".7" opacity=".9"/>
+    <ellipse cx="27" cy="13" rx="7" ry="5" fill="#0a1f14" stroke="#00B388" stroke-width=".7" opacity=".9"/>
+    <line x1="12" y1="23" x2="12" y2="27" stroke="#00B388" stroke-width=".7" opacity=".6"/>
+    <line x1="20" y1="23" x2="20" y2="27" stroke="#00B388" stroke-width=".7" opacity=".6"/>
+    <line x1="28" y1="23" x2="28" y2="27" stroke="#00B388" stroke-width=".7" opacity=".6"/>
+    ${rows}
+    <text x="50" y="30.5" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">HPE GreenLake for File · GL4F</text>
+  </svg>`;
+}
+
+function svgSpectrumX() {
+  const ports = [...Array(16)].map((_,i)=>`<rect x="${4+i*5.6}" y="4" width="4" height="5" rx=".4" fill="#111" stroke="#76B900" stroke-width=".4"/>
+    <rect x="${4+i*5.6}" y="10" width="4" height="5" rx=".4" fill="#111" stroke="#76B900" stroke-width=".3" opacity=".5"/>`).join('');
+  return `<svg viewBox="0 0 100 22" width="100" height="22" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="22" rx="2" fill="#080808"/>
+    <rect x=".5" y=".5" width="99" height="21" rx="1.5" fill="#111"/>
+    <rect x=".5" y=".5" width="4" height="21" rx="1" fill="#76B900"/>
+    ${ports}
+    <circle cx="92" cy="8" r="1.5" fill="#76B900" opacity=".8"/>
+    <text x="91" y="18" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">Spectrum-X</text>
+  </svg>`;
+}
+
+function svgSpectrum() {
+  const ports = [...Array(16)].map((_,i)=>`<rect x="${4+i*5.6}" y="4" width="4" height="5" rx=".4" fill="#111" stroke="#76B900" stroke-width=".4"/>
+    <rect x="${4+i*5.6}" y="10" width="4" height="5" rx=".4" fill="#111" stroke="#555" stroke-width=".3" opacity=".5"/>`).join('');
+  return `<svg viewBox="0 0 100 22" width="100" height="22" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="22" rx="2" fill="#080808"/>
+    <rect x=".5" y=".5" width="99" height="21" rx="1.5" fill="#111"/>
+    <rect x=".5" y=".5" width="4" height="21" rx="1" fill="#76B900" opacity=".55"/>
+    ${ports}
+    <circle cx="92" cy="8" r="1.5" fill="#76B900" opacity=".8"/>
+    <text x="91" y="18" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">Spectrum</text>
+  </svg>`;
+}
+
+function card(svgHtml, name, spec, tag, extraClass='', swChips=[]) {
+  const chips = swChips.length ? `<div class="sw-row" style="margin-top:5px">${swChips.map(([l,t])=>`<span class="sc ${t}">${l}</span>`).join('')}</div>` : '';
+  return `<div class="pcard ${extraClass}">
+    <div class="psvg">${svgHtml}</div>
+    <div class="pname">${name}</div>
+    <div class="pspec">${spec}</div>
+    <span class="ptag ${tag.cls}">${tag.label}</span>${chips}
+  </div>`;
+}
+
+function swStack(chips) {
+  return `<div class="sec"><div class="sec-lbl">Software stack</div>
+    <div class="sw-row">${chips.map(([l,t])=>`<span class="sc ${t}">${l}</span>`).join('')}</div>
+  </div>`;
+}
+
+document.getElementById('content').innerHTML = `
+  <div class="zh">
+    <span class="zh-badge" style="background:#0d2618;color:#00B388;border:1px solid #1a6040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;padding:3px 8px;border-radius:3px;flex-shrink:0;margin-top:2px">PCAI</span>
+    <div>
+      <div class="zh-city">HPE Private Cloud AI</div>
+      <div class="zh-desc">Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise integrated · Mixed H200 + RTX Pro 6000 compute · GreenLake for File (GL4F) storage · NVIDIA Spectrum fabric</div>
+    </div>
+  </div>
+  ${swStack([
+    ['JupyterHub','inf'],['MLflow','inf'],['KubeFlow','inf'],
+    ['NVIDIA NIM microservices','ai'],['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
+    ['HPE Private Cloud AI','hp'],['HPE Ezmeral Runtime Enterprise','hp'],['HPE Morpheus','hp']
+  ])}
+  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
+    ${card(svgServer2U(['RTX Pro 6000','Small inference']),'Small — HPE ProLiant DL','1–2 servers · RTX Pro 6000 (96GB) · Dev workloads + small model inference · Entry PCAI configuration',{cls:'compute',label:'S · RTX Pro 6000'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H200 + RTX Pro 6000','Mixed GPU']),'Medium — HPE ProLiant DL','2–4 servers · Mixed H200 + RTX Pro 6000 · Mid-scale inference + fine-tuning · Balanced GPU pool',{cls:'compute',label:'M · H200 + RTX Pro 6000'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H200 (primary)','RTX Pro 6000 (dev)']),'Large — HPE ProLiant DL','8 servers · H200 primary for large LLMs · RTX Pro 6000 for multimodal + dev · Maximum density configuration',{cls:'compute',label:'L · H200 Primary'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
+    ${card(svgGL4F(),'HPE GreenLake for File (GL4F)','Hybrid cloud file storage · Model checkpointing · Training datasets · Scalable NFS/SMB access · GreenLake consumption model · Elastic capacity',{cls:'storage',label:'GL4F · Hybrid File'},'w1')}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
+    ${card(svgSpectrumX(),'NVIDIA Spectrum-X','East-west GPU fabric · RoCE v2 · In-cluster AI traffic · Scale-out inference · High-bandwidth low-latency GPU-to-GPU',{cls:'net',label:'East-West · GPU Fabric'})}
+    ${card(svgSpectrum(),'NVIDIA Spectrum','North-south fabric · Management + storage traffic · Uplink to core network · ToR switching',{cls:'net',label:'North-South · ToR'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Also Explore</div><div class="pgrid">
+    <a href="../df/" class="pcard drill w1" style="text-decoration:none">
+      <div class="drill-name">↗ HPE Data Fabric</div>
+      <div class="pspec">Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines</div>
+      <span class="ptag hp-tag">Explore Data Fabric</span>
+    </a>
+    <a href="../" class="pcard drill w1" style="text-decoration:none">
+      <div class="drill-name">↗ Back to AI Grid</div>
+      <div class="pspec">Return to the US Reference Architecture · Zone 1 Core · Zone 2 Near Edge · Zone 3 Far Edge</div>
+      <span class="ptag hp-tag">AI Grid Map</span>
+    </a>
+  </div></div>
+`;
+</script>
+</body>
+</html>
