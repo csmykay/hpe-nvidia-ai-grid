@@ -550,8 +550,8 @@ function svgExtRDB() {
 
 /* ===== DRILL-DOWN OVERLAY ===== */
 
-function drillCard(title, desc, type) {
-  return `<div class="pcard drill" onclick="openOverlay('${type}')">
+function drillCard(title, desc, type, extraClass='') {
+  return `<div class="pcard drill ${extraClass}" onclick="openOverlay('${type}')">
     <div class="drill-name">↗ ${title}</div>
     <div class="pspec">${desc}</div>
     <span class="ptag hp-tag">Explore Layer</span>
@@ -772,12 +772,15 @@ function buildZ3() {
     ['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
     ['Juniper Apstra + Mist AI','hp'],['NGC Private Registry','inf'],['Prometheus + Grafana','inf']
   ])}
-  <div class="sec"><div class="sec-lbl">Platform Layers</div><div class="pgrid">
-    ${drillCard('AI Factory At Scale','Core cluster hardware · HPE Cray XD670 + DL380a · InfiniBand fabric · Juniper 800GbE spine · ClusterStor Lustre · Alletra MP','aifactory-z3')}
-    ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
-    ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
-  </div>
-  <button class="combined-btn" onclick="toggleCombinedView()">⊞ Connected Architecture</button>
+  <div class="sec"><div class="sec-lbl">Platform Layers</div>
+    <div class="pgrid">
+      ${drillCard('AI Factory At Scale','Core cluster hardware · HPE Cray XD670 + DL380a · InfiniBand fabric · Juniper 800GbE spine · ClusterStor Lustre · Alletra MP','aifactory-z3','w1')}
+    </div>
+    <button class="combined-btn" onclick="toggleCombinedView()">⊞ Connected Architecture</button>
+    <div class="pgrid" style="margin-top:7px">
+      ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
+      ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
+    </div>
   </div>`;
 }
 
@@ -795,12 +798,15 @@ function buildZ2() {
     ['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
     ['HPE Morpheus','hp'],['Juniper Mist AI (Managed)','hp']
   ])}
-  <div class="sec"><div class="sec-lbl">Platform Layers</div><div class="pgrid">
-    ${drillCard('AI Factory At Scale','Near Edge cluster hardware · HPE DL380 · NVIDIA Spectrum-X scale-across · Juniper QFX5130 + PTX WAN · Alletra 10K KV cache','aifactory-z2')}
-    ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
-    ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
-  </div>
-  <button class="combined-btn" onclick="toggleCombinedView()">⊞ Connected Architecture</button>
+  <div class="sec"><div class="sec-lbl">Platform Layers</div>
+    <div class="pgrid">
+      ${drillCard('AI Factory At Scale','Near Edge cluster hardware · HPE DL380 · NVIDIA Spectrum-X scale-across · Juniper QFX5130 + PTX WAN · Alletra 10K KV cache','aifactory-z2','w1')}
+    </div>
+    <button class="combined-btn" onclick="toggleCombinedView()">⊞ Connected Architecture</button>
+    <div class="pgrid" style="margin-top:7px">
+      ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
+      ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
+    </div>
   </div>`;
 }
 
