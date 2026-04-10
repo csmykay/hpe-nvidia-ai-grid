@@ -655,7 +655,7 @@ function buildCombined() {
     ['NVIDIA NIM microservices','ai'],['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
     ['HPE Private Cloud AI','hp'],['HPE Ezmeral Runtime Enterprise','hp'],['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
     ['JupyterHub','inf'],['MLflow','inf'],['KubeFlow','inf'],['Apache Airflow','inf'],['Apache Kafka','inf'],['Apache Spark','inf'],['Apache Iceberg','inf']
-  ])}
+  ],'Software')}
   <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
     ${card(svgServer2U(['RTX Pro 6000','Small inference']),'Small — HPE ProLiant DL','1–2 servers · RTX Pro 6000 (96GB) · Dev workloads + small model inference · Entry PCAI configuration',{cls:'compute',label:'S · RTX Pro 6000'},'w3',
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
@@ -664,7 +664,7 @@ function buildCombined() {
     ${card(svgServer2U(['H200 + RTX Pro 6000','Full mixed-GPU pool']),'Large — HPE ProLiant DL','8 servers · H200 for large LLMs · RTX Pro 6000 for multimodal + dev · Full mixed-GPU density',{cls:'compute',label:'L · H200 + RTX Pro 6000'},'w3',
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
   </div></div>
-  <div class="sec"><div class="sec-lbl">Core Platform</div><div class="pgrid">
+  <div class="sec"><div class="sec-lbl">Data</div><div class="pgrid">
     ${card(svgDataFabric(),'HPE Ezmeral Data Fabric','Distributed POSIX file system · S3-compatible object store · Apache Kafka event streaming · Global namespace · Multi-protocol access (NFS, S3, HDFS)',{cls:'storage',label:'Distributed Data Platform'},'w1')}
   </div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
@@ -751,8 +751,8 @@ function dpuCard() {
   </div>`;
 }
 
-function swStack(chips) {
-  return `<div class="sec"><div class="sec-lbl">Software stack</div>
+function swStack(chips, label='Software stack') {
+  return `<div class="sec"><div class="sec-lbl">${label}</div>
     <div class="sw-row">${chips.map(([l,t])=>`<span class="sc ${t}">${l}</span>`).join('')}</div>
   </div>`;
 }
