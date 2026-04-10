@@ -117,16 +117,15 @@ function svgSpectrumX() {
   </svg>`;
 }
 
-function svgSpectrum() {
-  const ports = [...Array(16)].map((_,i)=>`<rect x="${4+i*5.6}" y="4" width="4" height="5" rx=".4" fill="#111" stroke="#76B900" stroke-width=".4"/>
-    <rect x="${4+i*5.6}" y="10" width="4" height="5" rx=".4" fill="#111" stroke="#555" stroke-width=".3" opacity=".5"/>`).join('');
-  return `<svg viewBox="0 0 100 22" width="100" height="22" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="22" rx="2" fill="#080808"/>
-    <rect x=".5" y=".5" width="99" height="21" rx="1.5" fill="#111"/>
-    <rect x=".5" y=".5" width="4" height="21" rx="1" fill="#76B900" opacity=".55"/>
+function svgArubaCX4700() {
+  const ports = [...Array(12)].map((_,i)=>`<rect x="${4+i*7.8}" y="5" width="6" height="8" rx=".5" fill="#111" stroke="#00B388" stroke-width=".5"/>`).join('');
+  return `<svg viewBox="0 0 100 24" width="100" height="24" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="24" rx="2" fill="#080808"/>
+    <rect x=".5" y=".5" width="99" height="23" rx="1.5" fill="#111"/>
+    <rect x=".5" y=".5" width="4" height="23" rx="1" fill="#00B388"/>
     ${ports}
-    <circle cx="92" cy="8" r="1.5" fill="#76B900" opacity=".8"/>
-    <text x="91" y="18" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">Spectrum</text>
+    <circle cx="92" cy="8" r="1.5" fill="#00B388" opacity=".8"/>
+    <text x="91" y="20" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">CX 4700</text>
   </svg>`;
 }
 
@@ -164,7 +163,7 @@ document.getElementById('content').innerHTML = `
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
     ${card(svgServer2U(['H200 + RTX Pro 6000','Mixed GPU']),'Medium — HPE ProLiant DL','2–4 servers · Mixed H200 + RTX Pro 6000 · Mid-scale inference + fine-tuning · Balanced GPU pool',{cls:'compute',label:'M · H200 + RTX Pro 6000'},'w3',
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
-    ${card(svgServer2U(['H200 (primary)','RTX Pro 6000 (dev)']),'Large — HPE ProLiant DL','8 servers · H200 primary for large LLMs · RTX Pro 6000 for multimodal + dev · Maximum density configuration',{cls:'compute',label:'L · H200 Primary'},'w3',
+    ${card(svgServer2U(['H200 + RTX Pro 6000','Full mixed-GPU pool']),'Large — HPE ProLiant DL','8 servers · H200 for large LLMs · RTX Pro 6000 for multimodal + dev · Full mixed-GPU density',{cls:'compute',label:'L · H200 + RTX Pro 6000'},'w3',
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
   </div></div>
   <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
@@ -172,7 +171,7 @@ document.getElementById('content').innerHTML = `
   </div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
     ${card(svgSpectrumX(),'NVIDIA Spectrum-X','East-west GPU fabric · RoCE v2 · In-cluster AI traffic · Scale-out inference · High-bandwidth low-latency GPU-to-GPU',{cls:'net',label:'East-West · GPU Fabric'})}
-    ${card(svgSpectrum(),'NVIDIA Spectrum','North-south fabric · Management + storage traffic · Uplink to core network · ToR switching',{cls:'net',label:'North-South · ToR'})}
+    ${card(svgArubaCX4700(),'HPE Aruba CX 4700','North-south fabric · Management + storage traffic · Uplink to core network · HPE Aruba Central managed',{cls:'net',label:'North-South · ToR'})}
   </div></div>
   <div class="sec"><div class="sec-lbl">Also Explore</div><div class="pgrid">
     <a href="../df/" class="pcard drill w1" style="text-decoration:none">

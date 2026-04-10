@@ -119,6 +119,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
 /* External data source cards */
 .pcard.ext-src{border-color:#2a2520;background:#141210}
 .ext-lbl{font-size:8.5px;font-weight:600;padding:1.5px 5px;border-radius:2px;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;display:inline-block;background:#1a1000;color:#C88020;border:1px solid #8a5010}
+
+/* Combined PCAI+DF view */
+.combined-connector{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;background:#111110;border-bottom:1px solid #00B388;font-size:11px;font-weight:700;color:#00B388;flex-shrink:0}
+.combined-flow{font-size:9px;color:#555;font-weight:400}
+.combined-body{display:flex;flex:1;overflow:hidden;gap:1px;background:#2a2a26}
+.combined-pane{flex:1;overflow-y:auto;background:#1a1a16;padding:14px;scrollbar-width:thin;scrollbar-color:#333 transparent}
 </style>
 </head>
 <body>
@@ -146,6 +152,18 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
       <span class="lg" style="margin-left:6px"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#1D9E75" stroke-width="1.8"/></svg>Zone 2→1 (400–800GbE)</span>
       <span class="lg"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#85B7EB" stroke-width=".9" stroke-dasharray="4,2.5"/></svg>Zone 3→2 (100GbE WAN)</span>
       <span class="lg" style="margin-left:4px;color:#534AB7;font-weight:600">★ Example expanded below</span>
+      <button id="combined-btn" onclick="toggleCombinedView()" style="margin-left:auto;font-size:10px;font-weight:600;color:#00B388;background:none;border:1px solid #1a6040;border-radius:3px;padding:3px 9px;cursor:pointer">⊞ Connected Architecture</button>
+    </div>
+    <div id="combined-col" style="display:none;flex:1;overflow:hidden;flex-direction:column">
+      <div class="combined-connector">
+        <span>HPE Private Cloud AI</span>
+        <span class="combined-flow">← Training Data · Model Artifacts →</span>
+        <span>HPE Data Fabric</span>
+      </div>
+      <div class="combined-body">
+        <div id="combined-pcai" class="combined-pane"></div>
+        <div id="combined-df" class="combined-pane"></div>
+      </div>
     </div>
   </div>
 
@@ -491,6 +509,48 @@ function svgS3() {
   </svg>`;
 }
 
+function svgArubaCX4700() {
+  const ports = [...Array(12)].map((_,i)=>`<rect x="${4+i*7.8}" y="5" width="6" height="8" rx=".5" fill="#111" stroke="#00B388" stroke-width=".5"/>`).join('');
+  return `<svg viewBox="0 0 100 24" width="100" height="24" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="24" rx="2" fill="#080808"/>
+    <rect x=".5" y=".5" width="99" height="23" rx="1.5" fill="#111"/>
+    <rect x=".5" y=".5" width="4" height="23" rx="1" fill="#00B388"/>
+    ${ports}
+    <circle cx="92" cy="8" r="1.5" fill="#00B388" opacity=".8"/>
+    <text x="91" y="20" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">CX 4700</text>
+  </svg>`;
+}
+
+function svgExtFS() {
+  const bars = [0,1,2].map(i=>`<rect x="42" y="${7+i*7}" width="${28+i*6}" height="4.5" rx=".5" fill="#252525" stroke="#888" stroke-width=".4" opacity="${0.4+i*0.2}"/>`).join('');
+  return `<svg viewBox="0 0 100 32" width="100" height="32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="32" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="31" rx="1.5" fill="#1c1c1c"/>
+    <rect x=".5" y=".5" width="99" height="2.5" rx="1" fill="#888"/>
+    <rect x="6" y="6" width="26" height="18" rx="1.5" fill="#1e1e1e" stroke="#666" stroke-width=".6"/>
+    <rect x="9" y="9" width="20" height="3" rx=".4" fill="#444"/>
+    <rect x="9" y="14" width="14" height="3" rx=".4" fill="#333"/>
+    <rect x="9" y="19" width="17" height="3" rx=".4" fill="#333"/>
+    ${bars}
+    <text x="50" y="30.5" font-family="monospace" font-size="3.5" fill="#444" text-anchor="middle">NFS / CIFS / SMB</text>
+  </svg>`;
+}
+
+function svgExtRDB() {
+  return `<svg viewBox="0 0 100 32" width="100" height="32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="32" rx="2" fill="#111"/>
+    <rect x=".5" y=".5" width="99" height="31" rx="1.5" fill="#141824"/>
+    <rect x=".5" y=".5" width="99" height="2.5" rx="1" fill="#3a7bd5"/>
+    <ellipse cx="19" cy="10" rx="9" ry="4" fill="#1a2d4a" stroke="#3a7bd5" stroke-width=".6"/>
+    <rect x="10" y="10" width="18" height="8" fill="#1a2d4a"/>
+    <ellipse cx="19" cy="18" rx="9" ry="4" fill="#1a2d4a" stroke="#3a7bd5" stroke-width=".6" opacity=".8"/>
+    <rect x="10" y="18" width="18" height="4" fill="#1a2d4a"/>
+    <ellipse cx="19" cy="22" rx="9" ry="4" fill="#1a2d4a" stroke="#3a7bd5" stroke-width=".6" opacity=".6"/>
+    <text x="60" y="13" font-family="-apple-system,sans-serif" font-size="7" fill="#5a9bf0" font-weight="700" text-anchor="middle">Relational DB</text>
+    <text x="60" y="22" font-family="monospace" font-size="4" fill="#555" text-anchor="middle">PG · Oracle · SQL Server</text>
+  </svg>`;
+}
+
 /* ===== DRILL-DOWN OVERLAY ===== */
 
 function drillCard(title, desc, type) {
@@ -502,9 +562,16 @@ function drillCard(title, desc, type) {
 }
 
 function openOverlay(type) {
-  document.getElementById('overlay-body').innerHTML = type === 'pcai' ? buildPCAI() : buildDF();
-  document.getElementById('overlay-title').textContent = type === 'pcai' ? 'HPE Private Cloud AI' : 'HPE Ezmeral Data Fabric';
-  document.getElementById('overlay-standalone').href = type === 'pcai' ? 'pcai/' : 'df/';
+  let html, title, standalone;
+  if (type === 'pcai') { html = buildPCAI(); title = 'HPE Private Cloud AI'; standalone = 'pcai/'; }
+  else if (type === 'df') { html = buildDF(); title = 'HPE Ezmeral Data Fabric'; standalone = 'df/'; }
+  else if (type === 'aifactory-z3') { html = buildAIFactory('z3'); title = 'AI Factory At Scale — Core (Zone 1)'; standalone = ''; }
+  else { html = buildAIFactory('z2'); title = 'AI Factory At Scale — Near Edge (Zone 2)'; standalone = ''; }
+  document.getElementById('overlay-body').innerHTML = html;
+  document.getElementById('overlay-title').textContent = title;
+  const sa = document.getElementById('overlay-standalone');
+  sa.href = standalone || '#';
+  sa.style.display = standalone ? '' : 'none';
   document.getElementById('detail-overlay').classList.add('open');
   document.getElementById('overlay-body').scrollTop = 0;
 }
@@ -534,7 +601,7 @@ function buildPCAI() {
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
     ${card(svgServer2U(['H200 + RTX Pro 6000','Mixed GPU']),'Medium — HPE ProLiant DL','2–4 servers · Mixed H200 + RTX Pro 6000 · Mid-scale inference + fine-tuning · Balanced GPU pool',{cls:'compute',label:'M · H200 + RTX Pro 6000'},'w3',
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
-    ${card(svgServer2U(['H200 (primary)','RTX Pro 6000 (dev)']),'Large — HPE ProLiant DL','8 servers · H200 primary for large LLMs · RTX Pro 6000 for multimodal + dev · Maximum density configuration',{cls:'compute',label:'L · H200 Primary'},'w3',
+    ${card(svgServer2U(['H200 + RTX Pro 6000','Full mixed-GPU pool']),'Large — HPE ProLiant DL','8 servers · H200 for large LLMs · RTX Pro 6000 for multimodal + dev · Full mixed-GPU density',{cls:'compute',label:'L · H200 + RTX Pro 6000'},'w3',
       [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
   </div></div>
   <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
@@ -542,7 +609,7 @@ function buildPCAI() {
   </div></div>
   <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
     ${card(svgSpectrumX(),'NVIDIA Spectrum-X','East-west GPU fabric · RoCE v2 · In-cluster AI traffic · Scale-out inference · High-bandwidth low-latency GPU-to-GPU',{cls:'net',label:'East-West · GPU Fabric'})}
-    ${card(svgSpectrum(),'NVIDIA Spectrum','North-south fabric · Management + storage traffic · Uplink to core network · ToR switching',{cls:'net',label:'North-South · ToR'})}
+    ${card(svgArubaCX4700(),'HPE Aruba CX 4700','North-south fabric · Management + storage traffic · Uplink to core network · HPE Aruba Central managed',{cls:'net',label:'North-South · ToR'})}
   </div></div>`;
 }
 
@@ -567,17 +634,56 @@ function buildDF() {
   <div class="sec"><div class="sec-lbl">Storage Underpinning</div><div class="pgrid">
     ${card(svgAlletraMP(),'HPE Alletra MP','High-performance NVMe backing store · Data Fabric persistent layer · High-IOPS dataset access · Primary data tier',{cls:'storage',label:'NVMe Backing Store'},'w1')}
   </div></div>
-  <div class="sec"><div class="sec-lbl">Connected to PCAI</div><div class="pgrid">
-    <div class="pcard drill w1" onclick="openOverlay('pcai')">
-      <div class="drill-name">↗ HPE Private Cloud AI</div>
-      <div class="pspec">Training data pipeline → PCAI · Model artifact storage · Feature store · Real-time inference data feed via Kafka streams</div>
-      <span class="ptag hp-tag">Click to Explore PCAI</span>
-    </div>
-  </div></div>
   <div class="sec"><div class="sec-lbl">External Data Sources</div><div class="pgrid">
     ${card(svgSnowflake(),'Snowflake','Cloud data warehouse · Feature engineering datasets · Structured analytics data · Direct connector via Data Fabric',{cls:'storage',label:'Cloud Data Warehouse'})}
     ${card(svgDatabricks(),'Databricks','Lakehouse platform · Delta Lake tables · Spark-based feature pipelines · Model registry integration',{cls:'storage',label:'Lakehouse Platform'})}
     ${card(svgS3(),'S3 Object Storage','AWS S3 / S3-compatible · Raw data lake · Model artifact backup · Multi-cloud object tier',{cls:'storage',label:'Object Storage'})}
+    ${card(svgExtFS(),'External File Systems','NFS / CIFS / SMB mounts · On-premises NAS · Legacy file system integration · Global namespace bridging',{cls:'storage',label:'File Systems'})}
+    ${card(svgExtRDB(),'External Relational DBs','PostgreSQL · Oracle · SQL Server · JDBC/ODBC connectors · Feature extraction · Structured ML datasets',{cls:'storage',label:'Relational DBs'})}
+  </div></div>`;
+}
+
+/* ===== AI FACTORY AT SCALE PANEL ===== */
+
+function buildAIFactory(zone) {
+  if (zone === 'z3') {
+    return `
+  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
+    ${card(svgXD670(),'HPE Cray XD670','8× NVIDIA HGX H200 / B200 GPUs · Dense training + large model serving · NVLink fabric on-board',{cls:'compute',label:'Training / Large Inference'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H100 / H200','L40S  ·  RTX Pro 6000']),'HPE DL380a Gen11','Mixed-GPU flexible pool · H100/H200 for LLM · L40S for vision/multimodal · RTX Pro 6000 for dev workloads',{cls:'compute',label:'Mixed-GPU Inference'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
+  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
+    ${card(svgPTX10000(),'Juniper PTX10000','800GbE spine routing · Core inter-zone backbone · PTX10003 inter-zone WAN · Juniper Apstra intent-based automation',{cls:'net',label:'800GbE Spine'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgQFX5240(),'Juniper QFX5240','400GbE leaf / ToR · Server-facing 100GbE downlinks · 400GbE uplinks to PTX spine · EVPN-VXLAN',{cls:'net',label:'400GbE Leaf/ToR'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgIBSwitch(),'NVIDIA InfiniBand Quantum-2','GPU-to-GPU training fabric · HDR200 / NDR · SHARP in-network compute · Used only within HGX cluster',{cls:'net',label:'GPU-GPU Fabric'})}
+    ${card(svgSpectrumX(),'NVIDIA Spectrum-X Ethernet','Scale-across multi-rack inference clusters · RoCE v2 · Complements Juniper north-south fabric',{cls:'net',label:'Scale-Across'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
+    ${card(svgAlletraMP(),'HPE Alletra MP B10000','All-NVMe · Primary AI training datasets · Model checkpointing · High IOPS parallel access',{cls:'storage',label:'Training Tier'},'w1')}
+    ${card(svgAlletra10K(),'HPE Alletra 10K','STX certified + BF4 · Fast KV cache tier · Model promotion to edge zones · Sub-ms latency',{cls:'storage',label:'KV Cache / Promotion'})}
+    ${card(svgClusterStor(),'HPE ClusterStor E1000','Lustre parallel file system · HPC-scale training jobs · High-throughput checkpoint streaming',{cls:'storage',label:'Parallel FS (Lustre)'})}
+  </div></div>`;
+  }
+  return `
+  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
+    ${card(svgServer2U(['RTX Pro 6000 ×multi','Higher token throughput']),'HPE DL380 Gen11','Multi-GPU RTX Pro 6000 · Higher token throughput · Larger model serving where power allows',{cls:'compute',label:'Multi-GPU Edge'},'',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
+  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
+    ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD ports · 400GbE uplinks to PTX · Latest-gen Juniper campus/edge ToR',{cls:'net',label:'100GbE ToR'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgPTX10000(),'Juniper PTX Series','WAN/backbone routing · Zone 2→Zone 1 link · SD-WAN aggregation · Juniper Mist AI ops',{cls:'net',label:'WAN / Backbone'},'',
+      [['Juniper Mist AI (Managed)','hp']])}
+    ${card(svgSpectrumX(),'NVIDIA Spectrum-X Ethernet','Scale-across inference clusters at regional POP · RoCE v2 · 400GbE',{cls:'net',label:'Scale-Across'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
+    ${card(svgAlletra10K(),'HPE Alletra 10K','STX + BF4 certified · Fast KV cache movement across fabric · Regional model cache · Sub-ms inference tier',{cls:'storage',label:'KV Cache Tier (STX)'})}
   </div></div>`;
 }
 
@@ -625,27 +731,8 @@ function buildZ3() {
     ['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
     ['Juniper Apstra + Mist AI','hp'],['NGC Private Registry','inf'],['Prometheus + Grafana','inf']
   ])}
-  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
-    ${card(svgXD670(),'HPE Cray XD670','8× NVIDIA HGX H200 / B200 GPUs · Dense training + large model serving · NVLink fabric on-board',{cls:'compute',label:'Training / Large Inference'},'',
-      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
-    ${card(svgServer2U(['H100 / H200','L40S  ·  RTX Pro 6000']),'HPE DL380a Gen11','Mixed-GPU flexible pool · H100/H200 for LLM · L40S for vision/multimodal · RTX Pro 6000 for dev workloads',{cls:'compute',label:'Mixed-GPU Inference'},'',
-      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
-  </div></div>
-  <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
-  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
-    ${card(svgPTX10000(),'Juniper PTX10000','800GbE spine routing · Core inter-zone backbone · PTX10003 inter-zone WAN · Juniper Apstra intent-based automation',{cls:'net',label:'800GbE Spine'},'',
-      [['Juniper Mist AI (Managed)','hp']])}
-    ${card(svgQFX5240(),'Juniper QFX5240','400GbE leaf / ToR · Server-facing 100GbE downlinks · 400GbE uplinks to PTX spine · EVPN-VXLAN',{cls:'net',label:'400GbE Leaf/ToR'},'',
-      [['Juniper Mist AI (Managed)','hp']])}
-    ${card(svgIBSwitch(),'NVIDIA InfiniBand Quantum-2','GPU-to-GPU training fabric · HDR200 / NDR · SHARP in-network compute · Used only within HGX cluster',{cls:'net',label:'GPU-GPU Fabric'})}
-    ${card(svgSpectrumX(),'NVIDIA Spectrum-X Ethernet','Scale-across multi-rack inference clusters · RoCE v2 · Complements Juniper north-south fabric',{cls:'net',label:'Scale-Across'})}
-  </div></div>
-  <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
-    ${card(svgAlletraMP(),'HPE Alletra MP B10000','All-NVMe · Primary AI training datasets · Model checkpointing · High IOPS parallel access',{cls:'storage',label:'Training Tier'},'w1')}
-    ${card(svgAlletra10K(),'HPE Alletra 10K','STX certified + BF4 · Fast KV cache tier · Model promotion to edge zones · Sub-ms latency',{cls:'storage',label:'KV Cache / Promotion'})}
-    ${card(svgClusterStor(),'HPE ClusterStor E1000','Lustre parallel file system · HPC-scale training jobs · High-throughput checkpoint streaming',{cls:'storage',label:'Parallel FS (Lustre)'})}
-  </div></div>
   <div class="sec"><div class="sec-lbl">Platform Layers</div><div class="pgrid">
+    ${drillCard('AI Factory At Scale','Core cluster hardware · HPE Cray XD670 + DL380a · InfiniBand fabric · Juniper 800GbE spine · ClusterStor Lustre · Alletra MP','aifactory-z3')}
     ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
     ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
   </div></div>`;
@@ -665,22 +752,8 @@ function buildZ2() {
     ['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
     ['HPE Morpheus','hp'],['Juniper Mist AI (Managed)','hp']
   ])}
-  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
-    ${card(svgServer2U(['RTX Pro 6000 ×multi','Higher token throughput']),'HPE DL380 Gen11','Multi-GPU RTX Pro 6000 · Higher token throughput · Larger model serving where power allows',{cls:'compute',label:'Multi-GPU Edge'},'',
-      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
-  </div></div>
-  <div class="sec"><div class="sec-lbl">DPU — every node</div><div class="pgrid">${dpuCard()}</div></div>
-  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
-    ${card(svgQFX5130(),'Juniper QFX5130-32CD','100GbE ToR · 32× QSFP-DD ports · 400GbE uplinks to PTX · Latest-gen Juniper campus/edge ToR',{cls:'net',label:'100GbE ToR'},'',
-      [['Juniper Mist AI (Managed)','hp']])}
-    ${card(svgPTX10000(),'Juniper PTX Series','WAN/backbone routing · Zone 2→Zone 1 link · SD-WAN aggregation · Juniper Mist AI ops',{cls:'net',label:'WAN / Backbone'},'',
-      [['Juniper Mist AI (Managed)','hp']])}
-    ${card(svgSpectrumX(),'NVIDIA Spectrum-X Ethernet','Scale-across inference clusters at regional POP · RoCE v2 · 400GbE',{cls:'net',label:'Scale-Across'})}
-  </div></div>
-  <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
-    ${card(svgAlletra10K(),'HPE Alletra 10K','STX + BF4 certified · Fast KV cache movement across fabric · Regional model cache · Sub-ms inference tier',{cls:'storage',label:'KV Cache Tier (STX)'})}
-  </div></div>
   <div class="sec"><div class="sec-lbl">Platform Layers</div><div class="pgrid">
+    ${drillCard('AI Factory At Scale','Near Edge cluster hardware · HPE DL380 · NVIDIA Spectrum-X scale-across · Juniper QFX5130 + PTX WAN · Alletra 10K KV cache','aifactory-z2')}
     ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
     ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
   </div></div>`;
@@ -733,6 +806,20 @@ function switchZone(z) {
   document.querySelectorAll('.mz-ex').forEach(el => {
     el.style.opacity = el.dataset.zone === z ? '1' : '0.4';
   });
+}
+
+/* ===== COMBINED VIEW ===== */
+var combinedActive = false;
+function toggleCombinedView() {
+  combinedActive = !combinedActive;
+  document.getElementById('usmap').style.display = combinedActive ? 'none' : 'block';
+  document.getElementById('combined-btn').textContent = combinedActive ? '← Map View' : '⊞ Connected Architecture';
+  const col = document.getElementById('combined-col');
+  col.style.display = combinedActive ? 'flex' : 'none';
+  if (combinedActive) {
+    document.getElementById('combined-pcai').innerHTML = buildPCAI();
+    document.getElementById('combined-df').innerHTML = buildDF();
+  }
 }
 
 /* ===== MAP ===== */
