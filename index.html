@@ -123,8 +123,9 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
 /* Combined PCAI+DF view */
 .combined-connector{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;background:#111110;border-bottom:1px solid #00B388;font-size:11px;font-weight:700;color:#00B388;flex-shrink:0}
 .combined-flow{font-size:9px;color:#555;font-weight:400}
-.combined-body{display:flex;flex:1;overflow:hidden;gap:1px;background:#2a2a26}
-.combined-pane{flex:1;overflow-y:auto;background:#1a1a16;padding:14px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+#combined-content{flex:1;overflow-y:auto;background:#1a1a16;padding:14px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.combined-btn{margin-top:8px;width:100%;padding:7px 12px;font-size:11px;font-weight:600;color:#00B388;background:#0a1f14;border:1px solid #1a6040;border-radius:5px;cursor:pointer;text-align:left;display:block;transition:background .15s}
+.combined-btn:hover{background:#0d2618;border-color:#00B388}
 </style>
 </head>
 <body>
@@ -152,18 +153,14 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
       <span class="lg" style="margin-left:6px"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#1D9E75" stroke-width="1.8"/></svg>Zone 2→1 (400–800GbE)</span>
       <span class="lg"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="#85B7EB" stroke-width=".9" stroke-dasharray="4,2.5"/></svg>Zone 3→2 (100GbE WAN)</span>
       <span class="lg" style="margin-left:4px;color:#534AB7;font-weight:600">★ Example expanded below</span>
-      <button id="combined-btn" onclick="toggleCombinedView()" style="margin-left:auto;font-size:10px;font-weight:600;color:#00B388;background:none;border:1px solid #1a6040;border-radius:3px;padding:3px 9px;cursor:pointer">⊞ Connected Architecture</button>
     </div>
     <div id="combined-col" style="display:none;flex:1;overflow:hidden;flex-direction:column">
       <div class="combined-connector">
-        <span>HPE Private Cloud AI</span>
-        <span class="combined-flow">← Training Data · Model Artifacts →</span>
-        <span>HPE Data Fabric</span>
+        <span>HPE Private Cloud AI + Data Fabric</span>
+        <span class="combined-flow">Connected Architecture View</span>
+        <button onclick="toggleCombinedView()" style="font-size:10px;font-weight:600;color:#00B388;background:none;border:1px solid #1a6040;border-radius:3px;padding:3px 9px;cursor:pointer">← Map View</button>
       </div>
-      <div class="combined-body">
-        <div id="combined-pcai" class="combined-pane"></div>
-        <div id="combined-df" class="combined-pane"></div>
-      </div>
+      <div id="combined-content"></div>
     </div>
   </div>
 
@@ -643,6 +640,50 @@ function buildDF() {
   </div></div>`;
 }
 
+/* ===== COMBINED PCAI + DF VIEW ===== */
+
+function buildCombined() {
+  return `
+  <div class="zh">
+    <span class="zh-badge" style="background:#0d2618;color:#00B388;border:1px solid #1a6040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;padding:3px 8px;border-radius:3px;flex-shrink:0;margin-top:2px">PCAI + DF</span>
+    <div>
+      <div class="zh-city">HPE Private Cloud AI + Data Fabric</div>
+      <div class="zh-desc">Integrated AI platform + unified data layer · Model serving · Training data pipelines · GreenLake consumption model · Multi-cloud connectivity</div>
+    </div>
+  </div>
+  ${swStack([
+    ['NVIDIA NIM microservices','ai'],['NVIDIA Run:ai','ai'],['NVIDIA AI Enterprise','ai'],
+    ['HPE Private Cloud AI','hp'],['HPE Ezmeral Runtime Enterprise','hp'],['HPE Morpheus','hp'],['HPE Ezmeral Data Fabric','hp'],
+    ['JupyterHub','inf'],['MLflow','inf'],['KubeFlow','inf'],['Apache Airflow','inf'],['Apache Kafka','inf'],['Apache Spark','inf'],['Apache Iceberg','inf']
+  ])}
+  <div class="sec"><div class="sec-lbl">Compute</div><div class="pgrid">
+    ${card(svgServer2U(['RTX Pro 6000','Small inference']),'Small — HPE ProLiant DL','1–2 servers · RTX Pro 6000 (96GB) · Dev workloads + small model inference · Entry PCAI configuration',{cls:'compute',label:'S · RTX Pro 6000'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H200 + RTX Pro 6000','Mixed GPU']),'Medium — HPE ProLiant DL','2–4 servers · Mixed H200 + RTX Pro 6000 · Mid-scale inference + fine-tuning · Balanced GPU pool',{cls:'compute',label:'M · H200 + RTX Pro 6000'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+    ${card(svgServer2U(['H200 + RTX Pro 6000','Full mixed-GPU pool']),'Large — HPE ProLiant DL','8 servers · H200 for large LLMs · RTX Pro 6000 for multimodal + dev · Full mixed-GPU density',{cls:'compute',label:'L · H200 + RTX Pro 6000'},'w3',
+      [['NVIDIA Software Stack','ai'],['HPE Morpheus','hp']])}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Core Platform</div><div class="pgrid">
+    ${card(svgDataFabric(),'HPE Ezmeral Data Fabric','Distributed POSIX file system · S3-compatible object store · Apache Kafka event streaming · Global namespace · Multi-protocol access (NFS, S3, HDFS)',{cls:'storage',label:'Distributed Data Platform'},'w1')}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Networking</div><div class="pgrid">
+    ${card(svgSpectrumX(),'NVIDIA Spectrum-X','East-west GPU fabric · RoCE v2 · In-cluster AI traffic · Scale-out inference · High-bandwidth low-latency GPU-to-GPU',{cls:'net',label:'East-West · GPU Fabric'})}
+    ${card(svgArubaCX4700(),'HPE Aruba CX 4700','North-south fabric · Management + storage traffic · Uplink to core network · HPE Aruba Central managed',{cls:'net',label:'North-South · ToR'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">Storage</div><div class="pgrid">
+    ${card(svgGL4F(),'HPE GreenLake for File (GL4F) for PCAI','Hybrid cloud file storage · Model checkpointing · Training datasets · Scalable NFS/SMB access · GreenLake consumption model · Elastic capacity',{cls:'storage',label:'GL4F · Hybrid File'})}
+    ${card(svgAlletraMP(),'HPE Alletra MP','High-performance NVMe backing store · Data Fabric persistent layer · High-IOPS dataset access · Primary data tier',{cls:'storage',label:'NVMe Backing Store'})}
+  </div></div>
+  <div class="sec"><div class="sec-lbl">External Data Sources</div><div class="pgrid">
+    ${card(svgSnowflake(),'Snowflake','Cloud data warehouse · Feature engineering datasets · Structured analytics data · Direct connector via Data Fabric',{cls:'storage',label:'Cloud Data Warehouse'})}
+    ${card(svgDatabricks(),'Databricks','Lakehouse platform · Delta Lake tables · Spark-based feature pipelines · Model registry integration',{cls:'storage',label:'Lakehouse Platform'})}
+    ${card(svgS3(),'S3 Object Storage','AWS S3 / S3-compatible · Raw data lake · Model artifact backup · Multi-cloud object tier',{cls:'storage',label:'Object Storage'})}
+    ${card(svgExtFS(),'External File Systems','NFS / CIFS / SMB mounts · On-premises NAS · Legacy file system integration · Global namespace bridging',{cls:'storage',label:'File Systems'})}
+    ${card(svgExtRDB(),'External Relational DBs','PostgreSQL · Oracle · SQL Server · JDBC/ODBC connectors · Feature extraction · Structured ML datasets',{cls:'storage',label:'Relational DBs'})}
+  </div></div>`;
+}
+
 /* ===== AI FACTORY AT SCALE PANEL ===== */
 
 function buildAIFactory(zone) {
@@ -735,7 +776,9 @@ function buildZ3() {
     ${drillCard('AI Factory At Scale','Core cluster hardware · HPE Cray XD670 + DL380a · InfiniBand fabric · Juniper 800GbE spine · ClusterStor Lustre · Alletra MP','aifactory-z3')}
     ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
     ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
-  </div></div>`;
+  </div>
+  <button class="combined-btn" onclick="toggleCombinedView()">⊞ Connected Architecture</button>
+  </div>`;
 }
 
 function buildZ2() {
@@ -756,7 +799,9 @@ function buildZ2() {
     ${drillCard('AI Factory At Scale','Near Edge cluster hardware · HPE DL380 · NVIDIA Spectrum-X scale-across · Juniper QFX5130 + PTX WAN · Alletra 10K KV cache','aifactory-z2')}
     ${drillCard('HPE Private Cloud AI','Full-stack AI platform · Kubernetes-native · NVIDIA AI Enterprise · H200 + RTX Pro 6000 compute · GreenLake for File storage','pcai')}
     ${drillCard('HPE Data Fabric','Unified data layer · Multi-cloud connectivity · Snowflake · Databricks · S3 Object Storage · Apache Airflow pipelines','df')}
-  </div></div>`;
+  </div>
+  <button class="combined-btn" onclick="toggleCombinedView()">⊞ Connected Architecture</button>
+  </div>`;
 }
 
 function buildZ1() {
@@ -813,12 +858,13 @@ var combinedActive = false;
 function toggleCombinedView() {
   combinedActive = !combinedActive;
   document.getElementById('usmap').style.display = combinedActive ? 'none' : 'block';
-  document.getElementById('combined-btn').textContent = combinedActive ? '← Map View' : '⊞ Connected Architecture';
+  document.querySelectorAll('.combined-btn').forEach(btn => {
+    btn.textContent = combinedActive ? '✕ Close Connected View' : '⊞ Connected Architecture';
+  });
   const col = document.getElementById('combined-col');
   col.style.display = combinedActive ? 'flex' : 'none';
   if (combinedActive) {
-    document.getElementById('combined-pcai').innerHTML = buildPCAI();
-    document.getElementById('combined-df').innerHTML = buildDF();
+    document.getElementById('combined-content').innerHTML = buildCombined();
   }
 }
 
